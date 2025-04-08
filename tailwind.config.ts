@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -52,7 +53,42 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				sidebar: {
+				blue: {
+					50: '#e6f0f5',
+					100: '#cce1eb',
+					200: '#99c4d7',
+					300: '#66a6c2',
+					400: '#3389ae',
+					500: '#006b9a',
+					600: '#0B3954', // Primary blue
+					700: '#082c41',
+					800: '#051e2d',
+					900: '#030f1a'
+				},
+				teal: {
+					50: '#e6f7f7',
+					100: '#ccefef',
+					200: '#99dfdf',
+					300: '#66cfcf',
+					400: '#33bfbf',
+					500: '#10A5A5', // Secondary teal
+					700: '#086262',
+					800: '#054444',
+					900: '#032222'
+				},
+				orange: {
+					50: '#ffeeee',
+					100: '#ffdcdd',
+					200: '#ffb9bb',
+					300: '#ff979a',
+					400: '#FF5A5F', // Accent orange
+					500: '#ff2428',
+					600: '#e60006',
+					700: '#990004',
+					800: '#660002',
+					900: '#330001'
+				},
+				"sidebar": {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
 					primary: 'hsl(var(--sidebar-primary))',
@@ -70,25 +106,32 @@ export default {
 			},
 			keyframes: {
 				'accordion-down': {
-					from: {
-						height: '0'
-					},
-					to: {
-						height: 'var(--radix-accordion-content-height)'
-					}
+					from: { height: '0' },
+					to: { height: 'var(--radix-accordion-content-height)' },
 				},
 				'accordion-up': {
-					from: {
-						height: 'var(--radix-accordion-content-height)'
-					},
-					to: {
-						height: '0'
-					}
+					from: { height: 'var(--radix-accordion-content-height)' },
+					to: { height: '0' },
+				},
+				'fade-in': {
+					'0%': { opacity: '0', transform: 'translateY(10px)' },
+					'100%': { opacity: '1', transform: 'translateY(0)' }
+				},
+				'fade-out': {
+					'0%': { opacity: '1', transform: 'translateY(0)' },
+					'100%': { opacity: '0', transform: 'translateY(10px)' }
+				},
+				'slide-in': {
+					'0%': { transform: 'translateX(-100%)' },
+					'100%': { transform: 'translateX(0)' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'fade-in': 'fade-in 0.3s ease-out',
+				'fade-out': 'fade-out 0.3s ease-out',
+				'slide-in': 'slide-in 0.3s ease-out'
 			}
 		}
 	},
