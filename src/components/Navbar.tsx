@@ -24,6 +24,7 @@ const Navbar = () => {
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-8">
           <Link to="/" className="text-gray-700 hover:text-blue-600 transition-colors">Home</Link>
+          <Link to="/about" className="text-gray-700 hover:text-blue-600 transition-colors">About</Link>
           <Link to="/services" className="text-gray-700 hover:text-blue-600 transition-colors">Services</Link>
           <Link to="/projects" className="text-gray-700 hover:text-blue-600 transition-colors">Projects</Link>
           <Link to="/testimonials" className="text-gray-700 hover:text-blue-600 transition-colors">Testimonials</Link>
@@ -51,6 +52,7 @@ const Navbar = () => {
         <div className="md:hidden bg-white shadow-lg animate-slide-in absolute top-16 left-0 right-0 z-50 border-t">
           <div className="container-custom py-4 flex flex-col space-y-4">
             <Link to="/" className="text-gray-700 hover:text-blue-600 transition-colors py-2 border-b">Home</Link>
+            <Link to="/about" className="text-gray-700 hover:text-blue-600 transition-colors py-2 border-b">About</Link>
             <Link to="/services" className="text-gray-700 hover:text-blue-600 transition-colors py-2 border-b">Services</Link>
             <Link to="/projects" className="text-gray-700 hover:text-blue-600 transition-colors py-2 border-b">Projects</Link>
             <Link to="/testimonials" className="text-gray-700 hover:text-blue-600 transition-colors py-2 border-b">Testimonials</Link>

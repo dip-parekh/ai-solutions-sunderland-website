@@ -1,8 +1,8 @@
-
 import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, ArrowRight, Zap, LineChart, Globe, Code, MessageCircle } from 'lucide-react';
+import NewsletterSignup from '../components/NewsletterSignup';
 
 const Index = () => {
   return (
@@ -261,6 +261,15 @@ const Index = () => {
             <Button asChild variant="outline" size="lg" className="bg-transparent border-white text-white hover:bg-white/10">
               <Link to="/services">Learn More</Link>
             </Button>
+          </div>
+        </div>
+      </section>
+      
+      {/* Newsletter Section */}
+      <section className="section bg-gray-50">
+        <div className="container-custom">
+          <div className="max-w-3xl mx-auto">
+            <NewsletterSignup />
           </div>
         </div>
       </section>

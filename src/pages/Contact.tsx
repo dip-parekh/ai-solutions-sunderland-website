@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import Layout from '../components/Layout';
@@ -14,11 +13,23 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Mail, Phone, MapPin, ArrowRight } from 'lucide-react';
+import NewsletterSignup from '../components/NewsletterSignup';
+
+// Interface for form data
+interface InquiryFormData {
+  name: string;
+  email: string;
+  phone: string;
+  companyName: string;
+  country: string;
+  jobTitle: string;
+  message: string;
+}
 
 const Contact = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<InquiryFormData>({
     name: '',
     email: '',
     phone: '',
@@ -44,6 +55,19 @@ const Contact = () => {
     // Simulate form submission
     setTimeout(() => {
       console.log('Form data submitted:', formData);
+      
+      // Store the inquiry in local storage for demo purposes
+      // In a real app, this would be sent to a backend API
+      const existingInquiries = JSON.parse(localStorage.getItem('inquiries') || '[]');
+      const newInquiry = {
+        id: Date.now(),
+        ...formData,
+        date: new Date().toISOString().split('T')[0],
+        status: 'new'
+      };
+      
+      localStorage.setItem('inquiries', JSON.stringify([...existingInquiries, newInquiry]));
+      
       toast({
         title: "Inquiry Submitted",
         description: "Thank you! We'll get back to you shortly.",
@@ -279,6 +303,13 @@ const Contact = () => {
               ></iframe>
             </div>
           </div>
+        </div>
+      </section>
+      
+      {/* Newsletter Section */}
+      <section className="section bg-white">
+        <div className="container-custom max-w-3xl mx-auto">
+          <NewsletterSignup />
         </div>
       </section>
       
