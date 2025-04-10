@@ -1,0 +1,381 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us | AI-Solutions</title>
+  <meta name="description" content="Contact AI-Solutions to discuss your AI needs and digital employee experience solutions">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="index.html">AI-Solutions</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="services.html">Services</a></li>
+          <li class="nav-item"><a class="nav-link" href="projects.html">Projects</a></li>
+          <li class="nav-item"><a class="nav-link" href="testimonials.html">Testimonials</a></li>
+          <li class="nav-item"><a class="nav-link" href="news.html">News</a></li>
+          <li class="nav-item"><a class="nav-link" href="events.html">Events</a></li>
+          <li class="nav-item"><a class="nav-link active" href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero-section text-white text-center">
+    <div class="container">
+      <div class="row align-items-center min-vh-50">
+        <div class="col-lg-8 mx-auto">
+          <h1 class="display-4 fw-bold mb-4">Get In Touch</h1>
+          <p class="lead">Have a project in mind or want to learn more about our AI solutions?
+            Fill out the form below and our team will get back to you shortly.</p>
+        </div>
+      </div>
+    </div>
+    <div class="hero-overlay"></div>
+  </header>
+
+  <!-- Contact Form Section -->
+  <section class="py-5 bg-white">
+    <div class="container py-5">
+      <div class="row g-5">
+        <div class="col-lg-8">
+          <div class="card border-0 shadow-lg">
+            <div class="card-body p-5">
+              <h2 class="h3 mb-4">Send Us a Message</h2>
+              <form id="contactForm">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label for="name" class="form-label">Full Name *</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="John Doe" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="email" class="form-label">Email Address *</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="john@company.com" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="phone" class="form-label">Phone Number *</label>
+                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="+44 123 4567890" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="companyName" class="form-label">Company Name *</label>
+                    <input type="text" class="form-control" id="companyName" name="companyName" placeholder="Company Ltd." required>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="country" class="form-label">Country *</label>
+                    <select class="form-select" id="country" name="country" required>
+                      <option value="">Select country</option>
+                      <option value="uk">United Kingdom</option>
+                      <option value="us">United States</option>
+                      <option value="ca">Canada</option>
+                      <option value="au">Australia</option>
+                      <option value="de">Germany</option>
+                      <option value="fr">France</option>
+                      <option value="jp">Japan</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="jobTitle" class="form-label">Job Title *</label>
+                    <input type="text" class="form-control" id="jobTitle" name="jobTitle" placeholder="CTO / HR Manager" required>
+                  </div>
+                  <div class="col-12">
+                    <label for="message" class="form-label">Job Description / Requirements *</label>
+                    <textarea class="form-control" id="message" name="message" rows="6" placeholder="Please describe your project requirements or how we can help you..." required></textarea>
+                  </div>
+                  <div class="col-12 mt-4">
+                    <button type="submit" class="btn btn-primary px-5 py-3 w-100" id="submitButton">
+                      <span id="submitText">Submit Inquiry</span>
+                      <span id="submitSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status" aria-hidden="true"></span>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="card bg-primary text-white border-0 shadow-lg h-100">
+            <div class="card-body p-5">
+              <h3 class="h4 mb-4">Contact Information</h3>
+              <div class="d-flex mb-4">
+                <div class="me-3 bg-white bg-opacity-25 p-3 rounded-circle">
+                  <i class="fas fa-map-marker-alt text-white"></i>
+                </div>
+                <div>
+                  <h4 class="h6 mb-1">Address</h4>
+                  <p class="mb-0 text-white-75">123 Tech Park, Sunderland, SR1 1AA, United Kingdom</p>
+                </div>
+              </div>
+              <div class="d-flex mb-4">
+                <div class="me-3 bg-white bg-opacity-25 p-3 rounded-circle">
+                  <i class="fas fa-envelope text-white"></i>
+                </div>
+                <div>
+                  <h4 class="h6 mb-1">Email</h4>
+                  <p class="mb-0 text-white-75">info@ai-solutions.com</p>
+                  <p class="mb-0 text-white-75">support@ai-solutions.com</p>
+                </div>
+              </div>
+              <div class="d-flex mb-4">
+                <div class="me-3 bg-white bg-opacity-25 p-3 rounded-circle">
+                  <i class="fas fa-phone text-white"></i>
+                </div>
+                <div>
+                  <h4 class="h6 mb-1">Phone</h4>
+                  <p class="mb-0 text-white-75">+44 191 123 4567</p>
+                  <p class="mb-0 text-white-75">+44 191 765 4321</p>
+                </div>
+              </div>
+              <hr class="my-4 bg-white bg-opacity-25">
+              <h4 class="h6 mb-3">Office Hours</h4>
+              <p class="mb-1">Monday - Friday: 9am - 6pm</p>
+              <p>Saturday - Sunday: Closed</p>
+              <hr class="my-4 bg-white bg-opacity-25">
+              <h4 class="h6 mb-3">Follow Us</h4>
+              <div class="d-flex">
+                <a href="#" class="me-2 bg-white bg-opacity-25 p-2 rounded-circle text-white">
+                  <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="#" class="me-2 bg-white bg-opacity-25 p-2 rounded-circle text-white">
+                  <i class="fab fa-twitter"></i>
+                </a>
+                <a href="#" class="me-2 bg-white bg-opacity-25 p-2 rounded-circle text-white">
+                  <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a href="#" class="bg-white bg-opacity-25 p-2 rounded-circle text-white">
+                  <i class="fab fa-instagram"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Map Section -->
+  <section class="py-5 bg-light">
+    <div class="container">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+          <div class="ratio ratio-21x9">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d36397.638039862666!2d-1.4030604!3d54.9060025!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487e64ee57691c93%3A0x515967a9cb3b8a3b!2sSunderland!5e0!3m2!1sen!2suk!4v1681123456789!5m2!1sen!2suk" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Newsletter Section -->
+  <section class="py-5 bg-white">
+    <div class="container py-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="card bg-light border-0 shadow-sm">
+            <div class="card-body p-5 text-center">
+              <h3 class="mb-3">Subscribe to Our Newsletter</h3>
+              <p class="text-muted mb-4">Get the latest AI insights, industry news, and company updates delivered to your inbox.</p>
+              <form id="newsletterForm" class="row g-3 justify-content-center">
+                <div class="col-12 col-sm-8 col-md-6">
+                  <input type="email" class="form-control" id="newsletterEmail" placeholder="Your email address" required>
+                </div>
+                <div class="col-12 col-sm-4 col-md-3">
+                  <button type="submit" class="btn btn-primary w-100" id="newsletterSubmit">Subscribe</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-5">
+    <div class="container py-5">
+      <div class="text-center mb-5">
+        <h2 class="section-heading mb-3">Frequently Asked Questions</h2>
+        <p class="text-muted">Find answers to common questions about our services and process.</p>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="accordion" id="faqAccordion">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                  What types of businesses do you work with?
+                </button>
+              </h2>
+              <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  We work with businesses of all sizes across various industries including finance, healthcare, manufacturing, retail, and technology. Our AI solutions can be customized to fit the specific needs of your organization.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingTwo">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                  How long does implementation typically take?
+                </button>
+              </h2>
+              <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  Implementation timelines vary depending on the complexity of the project and your specific requirements. Simple integrations can be completed in as little as 2-3 weeks, while more comprehensive solutions may take 2-3 months. We'll provide a detailed timeline during our initial consultation.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingThree">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                  Can your solutions integrate with our existing systems?
+                </button>
+              </h2>
+              <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  Yes! Our AI solutions are designed to integrate seamlessly with your existing tech stack. We have experience working with a wide range of platforms, CRMs, ERPs, and custom-built systems.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingFour">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                  What kind of support do you offer after implementation?
+                </button>
+              </h2>
+              <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  We provide comprehensive ongoing support including regular maintenance, performance monitoring, updates, and dedicated customer service. We offer various support packages to meet your needs.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingFive">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                  How do you handle data privacy and security?
+                </button>
+              </h2>
+              <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  We take data privacy and security very seriously. All our solutions are built with security-first principles, comply with GDPR and other relevant regulations, and implement industry-standard encryption and security protocols.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-5 bg-primary text-white text-center">
+    <div class="container py-5">
+      <h2 class="display-5 mb-4">Ready to Get Started?</h2>
+      <p class="lead mb-5">Our team is ready to discuss your needs and show you how our AI solutions can transform your digital employee experience.</p>
+      <a href="#" class="btn btn-lg btn-light" onclick="document.getElementById('name').focus(); return false;">
+        Contact Us Today <i class="fas fa-arrow-right ms-2"></i>
+      </a>
+    </div>
+  </section>
+
+  <!-- Success Modal -->
+  <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title" id="successModalLabel"><i class="fas fa-check-circle me-2"></i> Success!</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center py-4">
+          <div class="mb-4">
+            <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+          </div>
+          <h4>Thank You!</h4>
+          <p class="mb-0">Your message has been sent successfully. We'll get back to you shortly.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-light py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-4 mb-4 mb-lg-0">
+          <h4 class="fw-bold mb-4">AI-Solutions</h4>
+          <p>Transforming digital employee experiences with intelligent, adaptive AI solutions.</p>
+          <div class="social-icons mt-4">
+            <a href="#" class="me-3 text-light"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="me-3 text-light"><i class="fab fa-linkedin"></i></a>
+            <a href="#" class="me-3 text-light"><i class="fab fa-facebook"></i></a>
+            <a href="#" class="text-light"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+        <div class="col-md-4 col-lg-2 mb-4 mb-lg-0">
+          <h5 class="mb-3">Company</h5>
+          <ul class="list-unstyled">
+            <li class="mb-2"><a href="index.html" class="text-decoration-none text-light">Home</a></li>
+            <li class="mb-2"><a href="about.html" class="text-decoration-none text-light">About</a></li>
+            <li class="mb-2"><a href="services.html" class="text-decoration-none text-light">Services</a></li>
+            <li class="mb-2"><a href="projects.html" class="text-decoration-none text-light">Projects</a></li>
+            <li class="mb-2"><a href="contact.html" class="text-decoration-none text-light">Contact</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4 col-lg-2 mb-4 mb-lg-0">
+          <h5 class="mb-3">Resources</h5>
+          <ul class="list-unstyled">
+            <li class="mb-2"><a href="news.html" class="text-decoration-none text-light">News</a></li>
+            <li class="mb-2"><a href="events.html" class="text-decoration-none text-light">Events</a></li>
+            <li class="mb-2"><a href="#" class="text-decoration-none text-light">Blog</a></li>
+            <li class="mb-2"><a href="#" class="text-decoration-none text-light">Resources</a></li>
+            <li class="mb-2"><a href="testimonials.html" class="text-decoration-none text-light">Testimonials</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4 col-lg-4">
+          <h5 class="mb-3">Contact Us</h5>
+          <ul class="list-unstyled">
+            <li class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> 123 Tech Park, Sunderland, SR1 1AA, UK</li>
+            <li class="mb-2"><i class="fas fa-phone me-2"></i> +44 191 123 4567</li>
+            <li class="mb-2"><i class="fas fa-envelope me-2"></i> info@ai-solutions.com</li>
+          </ul>
+        </div>
+      </div>
+      <hr class="my-4 bg-secondary">
+      <div class="row">
+        <div class="col-md-6 mb-3 mb-md-0">
+          <p class="mb-0">&copy; 2025 AI-Solutions. All rights reserved.</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+          <a href="#" class="text-decoration-none text-light me-3">Privacy Policy</a>
+          <a href="#" class="text-decoration-none text-light me-3">Terms of Service</a>
+          <a href="#" class="text-decoration-none text-light">Cookies</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS -->
+  <script src="js/main.js"></script>
+  <script src="js/contact.js"></script>
+</body>
+</html>
