@@ -1,33 +1,26 @@
 
 import { useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
-import { Send } from 'lucide-react';
+import { Mail } from 'lucide-react';
 
-const NewsletterSignup = ({ className = "" }: { className?: string }) => {
+const NewsletterSignup = () => {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
-    if (!email) {
-      toast({
-        title: "Please enter an email address",
-        variant: "destructive",
-      });
-      return;
-    }
-    
     setIsSubmitting(true);
     
-    // Simulate API call
+    // Simulate submission
     setTimeout(() => {
+      console.log('Newsletter signup:', email);
+      
       toast({
-        title: "Thanks for subscribing!",
-        description: "You'll receive our newsletter updates soon.",
+        title: "Success!",
+        description: "You've been subscribed to our newsletter.",
       });
       
       setEmail('');
@@ -36,32 +29,32 @@ const NewsletterSignup = ({ className = "" }: { className?: string }) => {
   };
 
   return (
-    <div className={`bg-blue-50 p-8 rounded-lg ${className}`}>
-      <h3 className="text-xl font-bold mb-3">Subscribe to Our Newsletter</h3>
-      <p className="text-gray-600 mb-6">
-        Get the latest AI insights, industry news, and company updates delivered to your inbox.
+    <div className="bg-blue-50 rounded-lg p-8 shadow-sm">
+      <div className="flex items-center justify-center mb-4">
+        <div className="bg-blue-600 p-3 rounded-full">
+          <Mail className="h-6 w-6 text-white" />
+        </div>
+      </div>
+      <h3 className="text-2xl font-bold text-center mb-2">Subscribe to Our Newsletter</h3>
+      <p className="text-gray-600 text-center mb-6">
+        Stay updated with the latest in AI technology and receive exclusive insights.
       </p>
-      
-      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
-        <Input
-          type="email"
-          placeholder="Your email address"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="flex-grow"
-          disabled={isSubmitting}
-        />
-        <Button 
-          type="submit" 
-          className="bg-blue-600 hover:bg-blue-700 text-white"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? 'Subscribing...' : (
-            <>
-              Subscribe <Send size={16} className="ml-2" />
-            </>
-          )}
-        </Button>
+      <form onSubmit={handleSubmit}>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex-grow">
+            <Input
+              type="email"
+              placeholder="Your email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full"
+            />
+          </div>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'Subscribing...' : 'Subscribe'}
+          </Button>
+        </div>
       </form>
     </div>
   );
