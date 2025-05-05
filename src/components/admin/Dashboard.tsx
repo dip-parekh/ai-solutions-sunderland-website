@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { 
   Users, MessageSquare, BarChart2, Calendar, 
-  Star, FileText, LogOut, Settings, Info 
+  Star, FileText, LogOut, Settings, Info, X 
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
