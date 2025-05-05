@@ -2,37 +2,65 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoginForm from '../components/admin/LoginForm';
-import Dashboard from '../components/admin/Dashboard';
+import AdminLayout from '../components/admin/AdminLayout';
+import { supabase } from '@/integrations/supabase/client';
 
 const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if admin is authenticated
-    const adminAuth = sessionStorage.getItem('adminAuthenticated') === 'true';
-    setIsAuthenticated(adminAuth);
+    const checkAuth = async () => {
+      // Check for existing session
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session) {
+        setIsAuthenticated(true);
+        // If on main admin page and authenticated, redirect to dashboard
+        if (window.location.pathname === '/admin') {
+          navigate('/admin/dashboard');
+        }
+      }
+      
+      setIsLoading(false);
+    };
     
-    // Handle direct access to dashboard URL
-    const path = window.location.pathname;
-    if (path === '/admin/dashboard' && !adminAuth) {
-      navigate('/admin');
-    }
+    checkAuth();
+    
+    // Set up auth listener for changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        const isAuth = !!session;
+        setIsAuthenticated(isAuth);
+        
+        if (isAuth && window.location.pathname === '/admin') {
+          navigate('/admin/dashboard');
+        }
+      }
+    );
+    
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [navigate]);
 
-  // Determine if we're on the dashboard route
-  const isDashboardRoute = window.location.pathname === '/admin/dashboard';
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {(isAuthenticated || isDashboardRoute) ? (
-        <Dashboard />
-      ) : (
-        <div className="min-h-screen flex items-center justify-center px-4">
+    <AdminLayout title="Admin Login">
+      {!isAuthenticated && (
+        <div className="flex items-center justify-center min-h-[80vh]">
           <LoginForm />
         </div>
       )}
-    </div>
+    </AdminLayout>
   );
 };
 

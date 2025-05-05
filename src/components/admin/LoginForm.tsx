@@ -1,50 +1,96 @@
 
-import { useState } from 'react';
+import { useState, FormEvent } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Lock, User } from 'lucide-react';
-
-// Mock admin credentials - in a real app, this would be verified against a database
-const ADMIN_EMAIL = 'admin@ai-solutions.com';
-const ADMIN_PASSWORD = 'admin123';
+import { supabase } from '@/integrations/supabase/client';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simple mock authentication
-    setTimeout(() => {
-      if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-        // Store in session storage for demo purposes
-        // In a real app, this would be a JWT token or similar
-        sessionStorage.setItem('adminAuthenticated', 'true');
-        
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+      
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: "Login failed",
+          description: error.message,
+        });
+      } else {
         toast({
           title: "Login successful",
           description: "Welcome to the admin dashboard.",
         });
-        
-        navigate('/admin/dashboard');
-      } else {
+      }
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Login failed",
+        description: error.message || "An unexpected error occurred",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSignUp = async () => {
+    if (!email || !password) {
+      toast({
+        variant: "destructive",
+        title: "Missing fields",
+        description: "Please enter both email and password",
+      });
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          // Set data for the user if needed
+          data: {
+            role: 'admin'
+          }
+        }
+      });
+      
+      if (error) {
         toast({
           variant: "destructive",
-          title: "Login failed",
-          description: "Invalid email or password. Please try again.",
+          title: "Sign up failed",
+          description: error.message,
+        });
+      } else {
+        toast({
+          title: "Account created",
+          description: "Please check your email for a confirmation link.",
         });
       }
-      
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Sign up failed",
+        description: error.message || "An unexpected error occurred",
+      });
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -102,10 +148,21 @@ const LoginForm = () => {
           {isSubmitting ? 'Signing in...' : 'Sign In'}
         </Button>
         
+        <div className="mt-4">
+          <Button 
+            type="button" 
+            variant="outline"
+            className="w-full" 
+            onClick={handleSignUp}
+            disabled={isSubmitting}
+          >
+            Create Admin Account
+          </Button>
+        </div>
+        
         <div className="text-center text-sm text-gray-500 mt-4">
-          <p>For demo purposes, use:</p>
-          <p>Email: admin@ai-solutions.com</p>
-          <p>Password: admin123</p>
+          <p>For a real admin dashboard, you need to create an account</p>
+          <p>or sign in with your Supabase credentials.</p>
         </div>
       </form>
     </div>
