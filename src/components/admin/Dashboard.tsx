@@ -17,6 +17,7 @@ interface Inquiry {
   date: string;
   status: 'new' | 'in progress' | 'completed';
   message?: string;
+  jobTitle?: string;
   aiCategory?: string;
   aiSentiment?: 'positive' | 'negative' | 'neutral';
   aiSuggestion?: string;
@@ -32,6 +33,7 @@ const mockInquiries: Inquiry[] = [
     date: '2025-05-04', 
     status: 'new',
     message: 'We need a custom AI solution for our customer service department.',
+    jobTitle: 'CTO',
     aiCategory: 'Sales',
     aiSentiment: 'positive',
     aiSuggestion: 'Recommend our Customer Service AI package with custom training.'
@@ -44,6 +46,7 @@ const mockInquiries: Inquiry[] = [
     date: '2025-05-03', 
     status: 'in progress',
     message: 'Looking to improve our patient intake process with AI analytics.',
+    jobTitle: 'Director of Operations',
     aiCategory: 'Support',
     aiSentiment: 'neutral',
     aiSuggestion: 'Schedule a demo of our Healthcare Analytics Platform.'
@@ -56,6 +59,7 @@ const mockInquiries: Inquiry[] = [
     date: '2025-05-02', 
     status: 'completed',
     message: 'Your AI solutions have been excellent, we want to discuss expanding our contract.',
+    jobTitle: 'Head of IT',
     aiCategory: 'Partnerships',
     aiSentiment: 'positive',
     aiSuggestion: 'Assign to account manager for partnership expansion discussion.'
@@ -68,6 +72,7 @@ const mockInquiries: Inquiry[] = [
     date: '2025-05-01', 
     status: 'new',
     message: 'We need help with our inventory management system urgently.',
+    jobTitle: 'Supply Chain Manager',
     aiCategory: 'Support',
     aiSentiment: 'negative',
     aiSuggestion: 'High priority - assign to technical support team immediately.'
@@ -80,6 +85,7 @@ const mockInquiries: Inquiry[] = [
     date: '2025-04-30', 
     status: 'in progress',
     message: 'Interested in your AI tutoring platform for our online courses.',
+    jobTitle: 'Director of E-Learning',
     aiCategory: 'Sales',
     aiSentiment: 'positive',
     aiSuggestion: 'Schedule product demo with education specialist.'
