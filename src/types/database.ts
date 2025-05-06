@@ -11,16 +11,15 @@ export type GalleryImage = Database['public']['Tables']['gallery_images']['Row']
 export type AITag = Database['public']['Tables']['ai_tags']['Row'];
 
 export interface Inquiry {
-  id: number;
+  id: string; // Changed from number to string to match UUID format
   name: string;
   email: string;
-  companyName?: string;
-  company?: string;
+  company?: string; // Simple company field from database
   message: string;
   date: string;
   status: 'new' | 'in progress' | 'completed';
-  jobTitle?: string;
-  aiCategory?: string;
-  aiSentiment?: 'positive' | 'negative' | 'neutral';
-  aiSuggestion?: string;
+  job_title?: string; // Changed from camelCase to snake_case to match database
+  ai_category?: string; // Changed from camelCase to snake_case to match database
+  ai_sentiment?: 'positive' | 'negative' | 'neutral';
+  ai_suggestion?: string; // Changed from camelCase to snake_case to match database
 }
