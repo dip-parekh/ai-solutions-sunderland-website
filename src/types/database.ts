@@ -1,76 +1,14 @@
 
-export interface Project {
-  id: string;
-  title: string;
-  description: string;
-  industry: string;
-  challenge?: string;
-  solution?: string;
-  results?: string;
-  image_url?: string;
-  client_name?: string;
-  is_featured?: boolean;
-  created_at?: string;
-  updated_at?: string;
-}
+// These types are for our internal use and will be compatible with what comes from Supabase
+import { Database } from '@/integrations/supabase/types';
 
-export interface Testimonial {
-  id: string;
-  name: string;
-  company?: string;
-  position?: string;
-  quote: string;
-  rating?: number;
-  image_url?: string;
-  is_featured?: boolean;
-  created_at?: string;
-}
-
-export interface Article {
-  id: string;
-  title: string;
-  content: string;
-  excerpt?: string;
-  author: string;
-  image_url?: string;
-  category?: string;
-  tags?: string[];
-  published_at?: string;
-  is_published?: boolean;
-  created_at?: string;
-  updated_at?: string;
-}
-
-export interface Event {
-  id: string;
-  title: string;
-  description: string;
-  location: string;
-  start_date: string;
-  end_date: string;
-  image_url?: string;
-  registration_url?: string;
-  is_featured?: boolean;
-  created_at?: string;
-  updated_at?: string;
-}
-
-export interface GalleryImage {
-  id: string;
-  event_id: string;
-  image_url: string;
-  caption?: string;
-  alt_text?: string;
-  created_at?: string;
-}
-
-export interface AITag {
-  id: string;
-  name: string;
-  description?: string;
-  color?: string;
-  created_at?: string;
-}
+// Type aliases that match the structure from Supabase but with our preferred field naming
+export type Project = Database['public']['Tables']['projects']['Row'];
+export type Testimonial = Database['public']['Tables']['testimonials']['Row'];
+export type Article = Database['public']['Tables']['articles']['Row'];
+export type Event = Database['public']['Tables']['events']['Row'];
+export type GalleryImage = Database['public']['Tables']['gallery_images']['Row'];
+export type AITag = Database['public']['Tables']['ai_tags']['Row'];
 
 export interface Inquiry {
   id: number;
