@@ -3,17 +3,8 @@ import { useEffect, useState } from 'react';
 import Layout from '@/components/Layout';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { Testimonial } from '@/types/database';
 import { Star } from 'lucide-react';
-
-interface Testimonial {
-  id: string;
-  name: string;
-  company: string;
-  position: string;
-  quote: string;
-  rating: number;
-  image_url?: string;
-}
 
 const Testimonials = () => {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
@@ -49,10 +40,9 @@ const Testimonials = () => {
     }
   };
 
-  // Function to render stars based on rating
-  const renderStars = (rating: number) => {
-    return Array(5).fill(0).map((_, index) => (
-      <Star 
+  const renderStars = (rating: number = 5) => {
+    return Array.from({ length: 5 }, (_, index) => (
+      <Star
         key={index}
         className={`h-5 w-5 ${index < rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
       />
@@ -63,9 +53,8 @@ const Testimonials = () => {
     <Layout>
       <div className="container mx-auto py-12 px-4">
         <h1 className="text-4xl font-bold text-center mb-4">Client Testimonials</h1>
-        <p className="text-center text-gray-600 max-w-2xl mx-auto mb-12">
-          Discover what our clients say about their experiences working with AI-Solutions.
-          We take pride in delivering exceptional results that exceed expectations.
+        <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+          Don't just take our word for it. Here's what our clients have to say about our AI solutions.
         </p>
         
         {isLoading ? (
@@ -75,38 +64,53 @@ const Testimonials = () => {
         ) : testimonials.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {testimonials.map((testimonial) => (
-              <div key={testimonial.id} className="bg-white rounded-lg shadow-md p-8 hover:shadow-lg transition-shadow">
-                <div className="flex items-center mb-4">
-                  {testimonial.image_url ? (
-                    <img 
-                      src={testimonial.image_url} 
-                      alt={testimonial.name} 
-                      className="w-14 h-14 rounded-full object-cover mr-4" 
-                    />
-                  ) : (
-                    <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center mr-4">
-                      <span className="text-blue-600 text-xl font-bold">{testimonial.name.substring(0, 1)}</span>
-                    </div>
-                  )}
+              <div 
+                key={testimonial.id} 
+                className={`bg-white p-6 rounded-lg shadow-md ${testimonial.is_featured ? 'border-2 border-blue-500' : ''}`}
+              >
+                <div className="flex flex-col h-full">
+                  <div className="mb-4 flex">{renderStars(testimonial.rating)}</div>
                   
-                  <div>
-                    <h3 className="font-bold text-lg">{testimonial.name}</h3>
-                    <p className="text-gray-600 text-sm">{testimonial.position}, {testimonial.company}</p>
+                  <blockquote className="text-gray-700 mb-6 flex-grow">
+                    "{testimonial.quote}"
+                  </blockquote>
+                  
+                  <div className="flex items-center">
+                    {testimonial.image_url ? (
+                      <div className="w-12 h-12 rounded-full overflow-hidden mr-4">
+                        <img 
+                          src={testimonial.image_url} 
+                          alt={testimonial.name} 
+                          className="w-full h-full object-cover" 
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-4">
+                        <span className="text-blue-600 font-bold">
+                          {testimonial.name.substring(0, 2).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
+                    
+                    <div>
+                      <div className="font-medium">{testimonial.name}</div>
+                      {(testimonial.position || testimonial.company) && (
+                        <div className="text-sm text-gray-500">
+                          {testimonial.position && <span>{testimonial.position}</span>}
+                          {testimonial.position && testimonial.company && <span>, </span>}
+                          {testimonial.company && <span>{testimonial.company}</span>}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-                
-                <div className="flex mb-4">
-                  {renderStars(testimonial.rating)}
-                </div>
-                
-                <p className="text-gray-700 italic mb-4">"{testimonial.quote}"</p>
               </div>
             ))}
           </div>
         ) : (
           <div className="text-center py-16">
             <h3 className="text-xl font-medium text-gray-900 mb-2">No testimonials available yet</h3>
-            <p className="text-gray-600">Check back soon to see what our clients are saying!</p>
+            <p className="text-gray-600">Check back soon to hear from our satisfied clients!</p>
           </div>
         )}
       </div>

@@ -3,18 +3,7 @@ import { useEffect, useState } from 'react';
 import Layout from '@/components/Layout';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-
-interface Project {
-  id: string;
-  title: string;
-  description: string;
-  industry: string;
-  challenge?: string;
-  solution?: string;
-  results?: string;
-  image_url?: string;
-  client_name?: string;
-}
+import { Project } from '@/types/database';
 
 const Projects = () => {
   const [projects, setProjects] = useState<Project[]>([]);
