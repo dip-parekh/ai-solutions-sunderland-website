@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
@@ -7,18 +6,7 @@ import { Calendar, MapPin, Plus, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-
-interface Event {
-  id: string;
-  title: string;
-  description: string;
-  location: string;
-  start_date: string;
-  end_date: string;
-  is_featured: boolean;
-  image_url?: string;
-  created_at: string;
-}
+import { Event } from '@/types/database';
 
 const Events = () => {
   const [events, setEvents] = useState<Event[]>([]);
