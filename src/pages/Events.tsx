@@ -5,6 +5,7 @@ import { EventList } from '@/components/events/EventList';
 import { EventPagination } from '@/components/events/EventPagination';
 import { EventsLoader } from '@/components/events/EventsLoader';
 import { FeaturedEvent } from '@/components/events/FeaturedEvent';
+import { EventSuggestions } from '@/components/events/EventSuggestions';
 import { useEvents } from '@/hooks/useEvents';
 
 const Events = () => {
@@ -61,6 +62,13 @@ const Events = () => {
                 filter={filter}
                 searchTerm={searchTerm}
               />
+              
+              {/* AI Event Suggestions */}
+              {events.length > 0 && !searchTerm && (
+                <div className="mt-16">
+                  <EventSuggestions />
+                </div>
+              )}
               
               {/* Pagination */}
               <EventPagination

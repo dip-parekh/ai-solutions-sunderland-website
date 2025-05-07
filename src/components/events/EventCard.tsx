@@ -1,77 +1,49 @@
-
-import { format } from 'date-fns';
-import { Link } from 'react-router-dom';
-import { Calendar, Clock, MapPin } from 'lucide-react';
 import { Event } from '@/types/database';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Calendar, MapPin } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
-interface EventCardProps {
-  event: Event;
-}
+export const EventCard = ({ event }: { event: Event }) => {
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString(undefined, { 
+      month: 'short', 
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
 
-export const EventCard = ({ event }: EventCardProps) => {
   return (
-    <Card key={event.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-      <div className="h-40 overflow-hidden">
-        {event.image_url ? (
-          <img 
-            src={event.image_url} 
-            alt={event.title} 
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" 
-          />
-        ) : (
-          <div className="w-full h-full bg-blue-50 flex items-center justify-center">
-            <Calendar className="h-10 w-10 text-blue-600" />
-          </div>
-        )}
-      </div>
-      
-      <CardHeader>
-        <CardTitle className="text-xl">{event.title}</CardTitle>
-        <CardDescription>
-          {new Date(event.start_date) > new Date() ? 'Upcoming Event' : 'Past Event'}
-        </CardDescription>
-      </CardHeader>
-      
-      <CardContent>
-        <div className="space-y-2 mb-4">
-          <div className="flex items-center text-sm">
-            <Calendar className="h-4 w-4 text-blue-600 mr-2" />
-            <span>
-              {format(new Date(event.start_date), 'MMMM d, yyyy')}
-            </span>
-          </div>
-          
-          <div className="flex items-center text-sm">
-            <Clock className="h-4 w-4 text-blue-600 mr-2" />
-            <span>
-              {format(new Date(event.start_date), 'h:mm a')}
-            </span>
-          </div>
-          
-          <div className="flex items-center text-sm">
-            <MapPin className="h-4 w-4 text-blue-600 mr-2" />
-            <span className="truncate">{event.location}</span>
+    <Link to={`/events/${event.id}`} className="block">
+      <div className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300">
+        <div className="h-48 bg-blue-100 relative">
+          {event.image_url ? (
+            <img 
+              src={event.image_url} 
+              alt={event.title} 
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <Calendar className="h-12 w-12 text-blue-500" />
+            </div>
+          )}
+          <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full px-2 py-1 text-xs">
+            {new Date(event.start_date) > new Date() ? 'Upcoming' : 'Past'}
           </div>
         </div>
-        
-        <p className="text-sm text-gray-600 line-clamp-2">{event.description}</p>
-      </CardContent>
-      
-      <CardFooter>
-        {event.registration_url ? (
-          <Button variant="outline" className="w-full" asChild>
-            <a href={event.registration_url} target="_blank" rel="noopener noreferrer">
-              View Details
-            </a>
-          </Button>
-        ) : (
-          <Button variant="outline" className="w-full">
-            View Details
-          </Button>
-        )}
-      </CardFooter>
-    </Card>
+        <div className="p-4">
+          <h3 className="text-lg font-semibold mb-2 line-clamp-1">{event.title}</h3>
+          <p className="text-gray-600 mb-3 line-clamp-2">{event.description}</p>
+          <div className="flex items-center text-sm text-gray-500 mb-2">
+            <Calendar className="h-4 w-4 mr-1" />
+            <span>{formatDate(event.start_date)}</span>
+          </div>
+          <div className="flex items-center text-sm text-gray-500">
+            <MapPin className="h-4 w-4 mr-1" />
+            <span className="line-clamp-1">{event.location}</span>
+          </div>
+        </div>
+      </div>
+    </Link>
   );
 };

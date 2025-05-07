@@ -2,6 +2,7 @@
 import { Event } from '@/types/database';
 import { EventCard } from './EventCard';
 import { NoEvents } from './NoEvents';
+import { useEffect } from 'react';
 
 interface EventListProps {
   events: Event[];
@@ -10,6 +11,23 @@ interface EventListProps {
 }
 
 export const EventList = ({ events, filter, searchTerm }: EventListProps) => {
+  // Track viewed events for AI suggestions
+  useEffect(() => {
+    if (events.length > 0) {
+      // Get current event IDs
+      const currentEventIds = events.map(event => event.id);
+      
+      // Get previously viewed events from localStorage
+      const viewedEvents = JSON.parse(localStorage.getItem('viewedEvents') || '[]');
+      
+      // Add current events to viewed events (without duplicates)
+      const updatedViewedEvents = Array.from(new Set([...viewedEvents, ...currentEventIds]));
+      
+      // Store back to localStorage (limit to last 20 to prevent excessive storage)
+      localStorage.setItem('viewedEvents', JSON.stringify(updatedViewedEvents.slice(-20)));
+    }
+  }, [events]);
+
   if (events.length === 0) {
     return <NoEvents searchTerm={searchTerm} filter={filter} />;
   }

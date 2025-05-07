@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/select';
 import { Mail, Phone, MapPin, ArrowRight } from 'lucide-react';
 import NewsletterSignup from '../components/NewsletterSignup';
+import { ChatWidget } from '../components/chat/ChatWidget';
 
 // Interface for form data
 interface InquiryFormData {
@@ -63,14 +64,18 @@ const Contact = () => {
         id: Date.now(),
         ...formData,
         date: new Date().toISOString().split('T')[0],
-        status: 'new'
+        status: 'new',
+        // AI-enhanced categorization
+        ai_category: categorizeInquiry(formData.message),
+        ai_sentiment: analyzeSentiment(formData.message)
       };
       
       localStorage.setItem('inquiries', JSON.stringify([...existingInquiries, newInquiry]));
       
+      // Show AI-enhanced auto-reply
       toast({
         title: "Inquiry Submitted",
-        description: "Thank you! We'll get back to you shortly.",
+        description: generateAutoReply(formData.name, categorizeInquiry(formData.message)),
       });
       
       // Reset form
@@ -86,6 +91,56 @@ const Contact = () => {
       
       setIsSubmitting(false);
     }, 1500);
+  };
+
+  // Simple AI categorization function
+  const categorizeInquiry = (message: string): string => {
+    const message_lower = message.toLowerCase();
+    if (message_lower.includes('price') || message_lower.includes('cost') || message_lower.includes('quote') || message_lower.includes('pricing')) {
+      return 'sales';
+    } else if (message_lower.includes('help') || message_lower.includes('issue') || message_lower.includes('problem') || message_lower.includes('error')) {
+      return 'support';
+    } else if (message_lower.includes('partner') || message_lower.includes('collaborate') || message_lower.includes('work together')) {
+      return 'partnerships';
+    } else {
+      return 'general';
+    }
+  };
+
+  // Simple sentiment analysis
+  const analyzeSentiment = (message: string): string => {
+    const positive_words = ['great', 'good', 'excellent', 'amazing', 'interested', 'happy', 'pleased', 'excited'];
+    const negative_words = ['bad', 'issue', 'problem', 'terrible', 'unhappy', 'disappointed', 'urgent', 'error'];
+    
+    const message_lower = message.toLowerCase();
+    let positive_count = 0;
+    let negative_count = 0;
+    
+    positive_words.forEach(word => {
+      if (message_lower.includes(word)) positive_count++;
+    });
+    
+    negative_words.forEach(word => {
+      if (message_lower.includes(word)) negative_count++;
+    });
+    
+    if (positive_count > negative_count) return 'positive';
+    if (negative_count > positive_count) return 'negative';
+    return 'neutral';
+  };
+
+  // Generate personalized auto-reply based on category
+  const generateAutoReply = (name: string, category: string): string => {
+    switch (category) {
+      case 'sales':
+        return `Thank you, ${name}! Our sales team will contact you within 1 business day with pricing information.`;
+      case 'support':
+        return `Thank you, ${name}! Our support team has been notified and will prioritize your request.`;
+      case 'partnerships':
+        return `Thank you, ${name}! Our partnerships team is excited to explore collaboration opportunities with you.`;
+      default:
+        return `Thank you, ${name}! We've received your message and will get back to you shortly.`;
+    }
   };
 
   return (
@@ -365,6 +420,9 @@ const Contact = () => {
           </Button>
         </div>
       </section>
+
+      {/* Chat Widget for urgent inquiries */}
+      <ChatWidget />
     </Layout>
   );
 };
