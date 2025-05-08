@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useNavigate, Routes, Route } from 'react-router-dom';
 import LoginForm from '../components/admin/LoginForm';
@@ -6,11 +5,11 @@ import AdminLayout from '../components/admin/AdminLayout';
 import { supabase } from '@/integrations/supabase/client';
 import Dashboard from './admin/Dashboard';
 import Inquiries from './admin/Inquiries';
-import { Projects } from './admin/Projects';
-import { Testimonials } from './admin/Testimonials';
-import { Articles } from './admin/Articles';
-import { Events } from './admin/Events';
-import { Gallery } from './admin/Gallery';
+import Projects from './admin/Projects';
+import Testimonials from './admin/Testimonials';
+import Articles from './admin/Articles';
+import Events from './admin/Events';
+import Gallery from './admin/Gallery';
 
 const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
