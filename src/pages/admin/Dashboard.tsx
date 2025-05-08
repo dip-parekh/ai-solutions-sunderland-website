@@ -1,11 +1,13 @@
 
-import AdminLayout from '@/components/admin/AdminLayout';
 import { useEffect, useState } from 'react';
+import AdminLayout from '@/components/admin/AdminLayout';
 import { StatsCards } from '@/components/admin/dashboard/StatsCards';
 import { ActivityChart } from '@/components/admin/dashboard/ActivityChart';
 import { RecentActivity } from '@/components/admin/dashboard/RecentActivity';
 import { QuickActions } from '@/components/admin/dashboard/QuickActions';
 import { supabase } from '@/integrations/supabase/client';
+import { Inquiry } from '@/types/database';
+import { useToast } from '@/hooks/use-toast';
 
 interface DashboardCounts {
   projects: number;
@@ -23,10 +25,12 @@ const Dashboard = () => {
     events: 0,
     inquiries: 0
   });
+  const [recentInquiries, setRecentInquiries] = useState<Inquiry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
-    const fetchCounts = async () => {
+    const fetchData = async () => {
       setIsLoading(true);
       
       try {
@@ -35,12 +39,16 @@ const Dashboard = () => {
           projectsResult, 
           testimonialsResult, 
           articlesResult, 
-          eventsResult
+          eventsResult,
+          inquiriesResult,
+          recentInquiriesResult
         ] = await Promise.all([
           supabase.from('projects').select('id', { count: 'exact', head: true }),
           supabase.from('testimonials').select('id', { count: 'exact', head: true }),
           supabase.from('articles').select('id', { count: 'exact', head: true }),
-          supabase.from('events').select('id', { count: 'exact', head: true })
+          supabase.from('events').select('id', { count: 'exact', head: true }),
+          supabase.from('inquiries').select('id', { count: 'exact', head: true }),
+          supabase.from('inquiries').select('*').order('created_at', { ascending: false }).limit(5)
         ]);
         
         setCounts({
@@ -48,17 +56,37 @@ const Dashboard = () => {
           testimonials: testimonialsResult.count || 0,
           articles: articlesResult.count || 0,
           events: eventsResult.count || 0,
-          inquiries: 5 // Mock data for now
+          inquiries: inquiriesResult.count || 0
         });
-      } catch (error) {
-        console.error('Error fetching dashboard counts:', error);
+
+        setRecentInquiries(recentInquiriesResult.data || []);
+      } catch (error: any) {
+        console.error('Error fetching dashboard data:', error);
+        toast({
+          variant: "destructive",
+          title: "Error loading dashboard",
+          description: error.message || "Failed to load dashboard data"
+        });
       } finally {
         setIsLoading(false);
       }
     };
     
-    fetchCounts();
-  }, []);
+    fetchData();
+
+    // Set up real-time listeners
+    const inquiriesChannel = supabase.channel('dashboard-inquiries')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'inquiries'
+      }, () => fetchData())
+      .subscribe();
+      
+    return () => {
+      supabase.removeChannel(inquiriesChannel);
+    };
+  }, [toast]);
 
   return (
     <AdminLayout title="Dashboard">
@@ -82,7 +110,7 @@ const Dashboard = () => {
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <ActivityChart isLoading={isLoading} />
-          <RecentActivity />
+          <RecentActivity inquiries={recentInquiries} isLoading={isLoading} />
         </div>
         
         <QuickActions />
