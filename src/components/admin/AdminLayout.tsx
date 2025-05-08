@@ -59,6 +59,13 @@ const AdminLayout = ({ children, title }: AdminLayoutProps) => {
             title: "Logged out",
             description: "You have been successfully logged out.",
           });
+        } else if (event === 'SIGNED_IN' && location.pathname === '/admin') {
+          // Redirect to dashboard after successful login
+          navigate('/admin/dashboard');
+          toast({
+            title: "Logged in",
+            description: "Welcome to the admin dashboard.",
+          });
         }
       }
     );
@@ -83,6 +90,27 @@ const AdminLayout = ({ children, title }: AdminLayoutProps) => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  // Add a special message when not authenticated but on admin page
+  if (!isAuthenticated && location.pathname === '/admin') {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col">
+        {/* Top Navigation */}
+        <header className="bg-white shadow-sm px-4 sm:px-6 py-3">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-4">
+              <Link to="/" className="text-xl font-bold text-blue-600">
+                AI-Solutions
+              </Link>
+              <span className="hidden md:inline text-gray-400">|</span>
+              <h1 className="hidden md:inline text-lg font-medium text-gray-800">{title}</h1>
+            </div>
+          </div>
+        </header>
+        {children}
       </div>
     );
   }

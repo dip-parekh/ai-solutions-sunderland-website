@@ -3,6 +3,7 @@ import { Event } from '@/types/database';
 import { EventCard } from './EventCard';
 import { NoEvents } from './NoEvents';
 import { useEffect } from 'react';
+import { EventSuggestions } from './EventSuggestions';
 
 interface EventListProps {
   events: Event[];
@@ -33,10 +34,15 @@ export const EventList = ({ events, filter, searchTerm }: EventListProps) => {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {events.map((event) => (
-        <EventCard key={event.id} event={event} />
-      ))}
+    <div className="space-y-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {events.map((event) => (
+          <EventCard key={event.id} event={event} />
+        ))}
+      </div>
+      
+      {/* Show event suggestions based on user's viewing history */}
+      <EventSuggestions />
     </div>
   );
 };
