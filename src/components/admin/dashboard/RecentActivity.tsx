@@ -10,7 +10,8 @@ interface RecentActivityProps {
 }
 
 export const RecentActivity = ({ inquiries = [], isLoading = false }: RecentActivityProps) => {
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return "No date";
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('en-US', {
       month: 'short',
@@ -59,7 +60,7 @@ export const RecentActivity = ({ inquiries = [], isLoading = false }: RecentActi
                   <p className="text-sm text-gray-500 mt-1 line-clamp-2">{inquiry.message}</p>
                   <div className="flex items-center mt-2 text-xs text-gray-500">
                     <Calendar size={12} className="mr-1" />
-                    <span>{formatDate(inquiry.date as string)}</span>
+                    <span>{formatDate(inquiry.date)}</span>
                   </div>
                 </div>
               </div>

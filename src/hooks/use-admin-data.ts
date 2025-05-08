@@ -25,7 +25,8 @@ export function useAdminData<T>(tableName: TableName) {
         throw error;
       }
       
-      setData(data || []);
+      // Use type assertion to ensure type compatibility
+      setData(data as unknown as T[]);
     } catch (err: any) {
       setError(err.message);
       toast({

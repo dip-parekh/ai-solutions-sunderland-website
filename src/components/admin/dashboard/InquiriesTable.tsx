@@ -110,9 +110,7 @@ export const InquiriesTable = ({
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{inquiry.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{inquiry.company}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {typeof inquiry.date === 'string' 
-                      ? new Date(inquiry.date).toLocaleDateString() 
-                      : new Date(inquiry.date).toLocaleDateString()}
+                    {inquiry.date ? new Date(inquiry.date).toLocaleDateString() : 'N/A'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium

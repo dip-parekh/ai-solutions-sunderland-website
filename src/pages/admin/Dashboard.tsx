@@ -59,7 +59,8 @@ const Dashboard = () => {
           inquiries: inquiriesResult.count || 0
         });
 
-        setRecentInquiries(recentInquiriesResult.data || []);
+        // Use type assertion to ensure compatibility
+        setRecentInquiries(recentInquiriesResult.data as unknown as Inquiry[]);
       } catch (error: any) {
         console.error('Error fetching dashboard data:', error);
         toast({

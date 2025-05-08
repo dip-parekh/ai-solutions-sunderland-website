@@ -10,16 +10,21 @@ export type Event = Database['public']['Tables']['events']['Row'];
 export type GalleryImage = Database['public']['Tables']['gallery_images']['Row'];
 export type AITag = Database['public']['Tables']['ai_tags']['Row'];
 
+// Updated Inquiry type to be compatible with both our database schema and UI needs
 export interface Inquiry {
-  id: string; // Changed from number to string to match UUID format
+  id: string; 
   name: string;
   email: string;
-  company?: string; // Simple company field from database
+  company?: string; 
   message: string;
-  date: string;
-  status: 'new' | 'in progress' | 'completed';
-  job_title?: string; // Changed from camelCase to snake_case to match database
-  ai_category?: string; // Changed from camelCase to snake_case to match database
-  ai_sentiment?: 'positive' | 'negative' | 'neutral';
-  ai_suggestion?: string; // Changed from camelCase to snake_case to match database
+  date: string | null;
+  // Updated to accept any string but with preferred values defined
+  status: string;
+  job_title?: string; 
+  ai_category?: string; 
+  ai_sentiment?: string;
+  ai_suggestion?: string;
+  
+  // Add created_at to match database schema
+  created_at?: string;
 }
