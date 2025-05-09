@@ -73,7 +73,7 @@ const Inquiries = () => {
         throw error;
       }
       
-      setInquiries(data || []);
+      setInquiries(data as Inquiry[]);
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -139,7 +139,7 @@ const Inquiries = () => {
         inquiry.email,
         inquiry.company || '',
         inquiry.date ? new Date(inquiry.date).toISOString().split('T')[0] : '',
-        inquiry.status,
+        inquiry.status || '',
         inquiry.message || '',
         inquiry.ai_category || '',
         inquiry.ai_sentiment || '',
@@ -226,7 +226,7 @@ const Inquiries = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <Select
-                        defaultValue={inquiry.status}
+                        defaultValue={inquiry.status || 'new'}
                         onValueChange={(value) => updateInquiryStatus(inquiry.id, value)}
                       >
                         <SelectTrigger className="w-[130px]">

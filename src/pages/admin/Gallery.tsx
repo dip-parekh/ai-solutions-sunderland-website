@@ -12,7 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 const Gallery = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingImage, setEditingImage] = useState<Partial<GalleryImage> | null>(null);
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<{id: string, title: string}[]>([]);
   
   const { 
     items: images, 
@@ -36,7 +36,7 @@ const Gallery = () => {
         .order('start_date', { ascending: false });
       
       if (data) {
-        setEvents(data);
+        setEvents(data as {id: string, title: string}[]);
       }
     } catch (error) {
       console.error('Error fetching events:', error);

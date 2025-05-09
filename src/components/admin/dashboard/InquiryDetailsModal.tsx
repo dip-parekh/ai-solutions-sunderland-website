@@ -1,119 +1,111 @@
 
-import { Button } from "@/components/ui/button";
-import { Inquiry } from "@/types/database";
-import { Info, X } from "lucide-react";
+import React from 'react';
+import { format } from 'date-fns';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Inquiry } from '@/types/database';
+import { X } from 'lucide-react';
 
-interface InquiryDetailsModalProps {
+export interface InquiryDetailsModalProps {
   inquiry: Inquiry;
   onClose: () => void;
+  onStatusChange: (id: string, status: string) => Promise<void>;
 }
 
-export const InquiryDetailsModal = ({ inquiry, onClose }: InquiryDetailsModalProps) => {
+export const InquiryDetailsModal = ({ inquiry, onClose, onStatusChange }: InquiryDetailsModalProps) => {
+  const statusOptions = [
+    { label: 'New', value: 'new' },
+    { label: 'In Progress', value: 'in progress' },
+    { label: 'Completed', value: 'completed' }
+  ];
+
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return 'Not specified';
+    return format(new Date(dateString), 'MMM d, yyyy h:mm a');
+  };
+
   return (
-    <div className="fixed inset-0 bg-gray-500 bg-opacity-75 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-        <div className="p-6 border-b">
+    <Dialog open={true} onOpenChange={() => onClose()}>
+      <DialogContent className="sm:max-w-xl">
+        <DialogHeader className="relative">
+          <DialogTitle className="mb-4">Inquiry Details</DialogTitle>
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={onClose}
+            className="absolute right-0 top-0"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </DialogHeader>
+
+        <div className="space-y-6">
           <div className="flex justify-between items-start">
-            <h3 className="text-lg font-bold">Inquiry Details</h3>
-            <button 
-              onClick={onClose}
-              className="text-gray-500 hover:text-gray-700"
-            >
-              <X size={20} />
-            </button>
-          </div>
-        </div>
-        
-        <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
-              <h4 className="text-sm font-medium text-gray-500 mb-1">Contact Information</h4>
-              <div className="space-y-3">
-                <div>
-                  <p className="text-sm text-gray-500">Name</p>
-                  <p className="font-medium">{inquiry.name}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Email</p>
-                  <p className="font-medium">{inquiry.email}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Company</p>
-                  <p className="font-medium">{inquiry.company || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Job Title</p>
-                  <p className="font-medium">{inquiry.job_title || 'N/A'}</p>
-                </div>
-              </div>
+              <h3 className="text-lg font-medium">{inquiry.name}</h3>
+              <p className="text-sm text-gray-500">{inquiry.email}</p>
+              {inquiry.company && <p className="text-sm text-gray-500">{inquiry.company}</p>}
             </div>
-            
+            <div className="flex-shrink-0">
+              <Select
+                value={inquiry.status || 'new'}
+                onValueChange={(value) => onStatusChange(inquiry.id, value)}
+              >
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue placeholder="Set status" />
+                </SelectTrigger>
+                <SelectContent>
+                  {statusOptions.map(option => (
+                    <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 text-sm py-4 border-t border-b">
             <div>
-              <h4 className="text-sm font-medium text-gray-500 mb-1">Inquiry Details</h4>
-              <div className="space-y-3">
-                <div>
-                  <p className="text-sm text-gray-500">Date Submitted</p>
-                  <p className="font-medium">{inquiry.date}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Status</p>
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                    ${inquiry.status === 'new' ? 'bg-blue-100 text-blue-800' : 
-                      inquiry.status === 'in progress' ? 'bg-yellow-100 text-yellow-800' : 
-                      'bg-green-100 text-green-800'
-                    }`}
-                  >
-                    {inquiry.status === 'new' ? 'New' : 
-                     inquiry.status === 'in progress' ? 'In Progress' : 
-                     'Completed'}
-                  </span>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">AI Category</p>
-                  <p className="font-medium">{inquiry.ai_category || 'Not Categorized'}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Sentiment</p>
-                  {inquiry.ai_sentiment && (
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                      ${inquiry.ai_sentiment === 'positive' ? 'bg-green-100 text-green-800' : 
-                        inquiry.ai_sentiment === 'negative' ? 'bg-red-100 text-red-800' : 
-                        'bg-gray-100 text-gray-800'
-                      }`}
-                    >
-                      {inquiry.ai_sentiment.charAt(0).toUpperCase() + inquiry.ai_sentiment.slice(1)}
-                    </span>
-                  )}
-                </div>
-              </div>
+              <p className="text-gray-500">Date Submitted</p>
+              <p>{formatDate(inquiry.date)}</p>
+            </div>
+            <div>
+              <p className="text-gray-500">AI Category</p>
+              <p>{inquiry.ai_category || 'Not categorized'}</p>
+            </div>
+            <div>
+              <p className="text-gray-500">AI Sentiment</p>
+              <p>{inquiry.ai_sentiment || 'Not analyzed'}</p>
+            </div>
+            <div>
+              <p className="text-gray-500">Job Title</p>
+              <p>{inquiry.job_title || 'Not specified'}</p>
             </div>
           </div>
-          
-          <div className="mb-6">
-            <h4 className="text-sm font-medium text-gray-500 mb-2">Message</h4>
-            <div className="bg-gray-50 p-4 rounded border">
-              <p>{inquiry.message || 'No message provided.'}</p>
+
+          <div>
+            <p className="font-medium mb-2">Message:</p>
+            <div className="bg-gray-50 p-4 rounded-md whitespace-pre-wrap">
+              {inquiry.message}
             </div>
           </div>
-          
+
           {inquiry.ai_suggestion && (
-            <div className="mb-6">
-              <h4 className="text-sm font-medium text-gray-500 mb-2 flex items-center">
-                <Info size={16} className="mr-1 text-blue-600" />
-                AI-Generated Suggestion
-              </h4>
-              <div className="bg-blue-50 p-4 rounded border border-blue-100 text-blue-800">
-                <p>{inquiry.ai_suggestion}</p>
+            <div>
+              <p className="font-medium mb-2">AI Suggestion:</p>
+              <div className="bg-blue-50 p-4 rounded-md">
+                {inquiry.ai_suggestion}
               </div>
             </div>
           )}
-          
-          <div className="border-t pt-6 flex justify-end space-x-3">
-            <Button variant="outline" onClick={onClose}>Close</Button>
-            <Button>Update Status</Button>
-          </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };

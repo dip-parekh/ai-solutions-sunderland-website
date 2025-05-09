@@ -27,7 +27,7 @@ export function useAdminContent<T extends ContentItem>(contentType: ContentType)
         throw error;
       }
       
-      setItems(data as unknown as T[]);
+      setItems(data as T[]);
     } catch (err: any) {
       setError(err.message);
       toast({
@@ -44,20 +44,20 @@ export function useAdminContent<T extends ContentItem>(contentType: ContentType)
     try {
       const { data, error } = await supabase
         .from(contentType)
-        .insert([item])
+        .insert([item as any])  // Use type assertion to fix the TS error
         .select()
         .single();
       
       if (error) throw error;
       
-      setItems(prev => [data as unknown as T, ...prev]);
+      setItems(prev => [data as T, ...prev]);
       
       toast({
         title: "Item created",
         description: `New item has been successfully created.`,
       });
       
-      return data as unknown as T;
+      return data as T;
     } catch (err: any) {
       toast({
         variant: "destructive",
@@ -72,21 +72,21 @@ export function useAdminContent<T extends ContentItem>(contentType: ContentType)
     try {
       const { data, error } = await supabase
         .from(contentType)
-        .update(updates)
+        .update(updates as any)  // Use type assertion to fix the TS error
         .eq('id', id)
         .select()
         .single();
       
       if (error) throw error;
       
-      setItems(prev => prev.map(item => item.id === id ? (data as unknown as T) : item));
+      setItems(prev => prev.map(item => item.id === id ? (data as T) : item));
       
       toast({
         title: "Item updated",
         description: `Item has been successfully updated.`,
       });
       
-      return data as unknown as T;
+      return data as T;
     } catch (err: any) {
       toast({
         variant: "destructive",
@@ -124,8 +124,8 @@ export function useAdminContent<T extends ContentItem>(contentType: ContentType)
     }
   };
   
-  const toggleFeatured = async (id: string, isFeatured: boolean) => {
-    return updateItem(id, { is_featured: isFeatured } as unknown as Partial<T>);
+  const toggleFeatured = async (id: string, isFeatured: boolean): Promise<void> => {
+    await updateItem(id, { is_featured: isFeatured } as unknown as Partial<T>);
   };
 
   return {
