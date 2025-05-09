@@ -1,11 +1,13 @@
 
 import { BarChart2 } from "lucide-react";
+import { Inquiry } from "@/types/database";
 
 interface ActivityChartProps {
+  data?: Inquiry[];
   isLoading: boolean;
 }
 
-export const ActivityChart = ({ isLoading }: ActivityChartProps) => {
+export const ActivityChart = ({ data = [], isLoading }: ActivityChartProps) => {
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
       <div className="flex justify-between items-center mb-6">

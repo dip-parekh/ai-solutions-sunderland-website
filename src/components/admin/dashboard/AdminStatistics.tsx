@@ -21,25 +21,29 @@ export const AdminStatistics = ({ inquiries, isLoading = false }: AdminStatistic
       title: "New Inquiries",
       value: newCount,
       change: "+5%",
-      icon: "MessageSquare"
+      icon: "MessageSquare",
+      link: "/admin/inquiries?status=new"
     },
     {
       title: "In Progress",
       value: inProgressCount,
       change: "+2%",
-      icon: "Clock"
+      icon: "Clock",
+      link: "/admin/inquiries?status=in progress"
     },
     {
       title: "Completed",
       value: completedCount,
       change: "+12%",
-      icon: "CheckCircle"
+      icon: "CheckCircle",
+      link: "/admin/inquiries?status=completed"
     },
     {
       title: "Total Inquiries",
       value: inquiries.length,
       change: "+8%",
-      icon: "Users"
+      icon: "MessageSquare",
+      link: "/admin/inquiries"
     },
   ];
 
