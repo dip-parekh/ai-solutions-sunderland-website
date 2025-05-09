@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from './use-toast';
 import { Article, Event, Project, Testimonial, GalleryImage } from '@/types/database';
@@ -44,7 +44,7 @@ export function useAdminContent<T extends ContentItem>(contentType: ContentType)
     try {
       const { data, error } = await supabase
         .from(contentType)
-        .insert([item as any])  // Use type assertion to fix the TS error
+        .insert([item as any])
         .select()
         .single();
       
@@ -54,14 +54,14 @@ export function useAdminContent<T extends ContentItem>(contentType: ContentType)
       
       toast({
         title: "Item created",
-        description: `New item has been successfully created.`,
+        description: `New ${contentType.slice(0, -1)} has been successfully created.`,
       });
       
       return data as T;
     } catch (err: any) {
       toast({
         variant: "destructive",
-        title: `Error creating item`,
+        title: `Error creating ${contentType.slice(0, -1)}`,
         description: err.message,
       });
       throw err;
@@ -72,7 +72,7 @@ export function useAdminContent<T extends ContentItem>(contentType: ContentType)
     try {
       const { data, error } = await supabase
         .from(contentType)
-        .update(updates as any)  // Use type assertion to fix the TS error
+        .update(updates as any)
         .eq('id', id)
         .select()
         .single();
@@ -83,14 +83,14 @@ export function useAdminContent<T extends ContentItem>(contentType: ContentType)
       
       toast({
         title: "Item updated",
-        description: `Item has been successfully updated.`,
+        description: `${contentType.slice(0, -1).charAt(0).toUpperCase() + contentType.slice(0, -1).slice(1)} has been successfully updated.`,
       });
       
       return data as T;
     } catch (err: any) {
       toast({
         variant: "destructive",
-        title: `Error updating item`,
+        title: `Error updating ${contentType.slice(0, -1)}`,
         description: err.message,
       });
       throw err;
@@ -110,14 +110,14 @@ export function useAdminContent<T extends ContentItem>(contentType: ContentType)
       
       toast({
         title: "Item deleted",
-        description: `Item has been successfully deleted.`,
+        description: `${contentType.slice(0, -1).charAt(0).toUpperCase() + contentType.slice(0, -1).slice(1)} has been successfully deleted.`,
       });
       
       return true;
     } catch (err: any) {
       toast({
         variant: "destructive",
-        title: `Error deleting item`,
+        title: `Error deleting ${contentType.slice(0, -1)}`,
         description: err.message,
       });
       throw err;
@@ -127,6 +127,26 @@ export function useAdminContent<T extends ContentItem>(contentType: ContentType)
   const toggleFeatured = async (id: string, isFeatured: boolean): Promise<void> => {
     await updateItem(id, { is_featured: isFeatured } as unknown as Partial<T>);
   };
+
+  // Set up real-time listener for data changes
+  useEffect(() => {
+    fetchItems();
+    
+    // Set up real-time listener
+    const channel = supabase.channel(`${contentType}-changes`)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: contentType
+      }, () => {
+        fetchItems();
+      })
+      .subscribe();
+      
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [contentType]);
 
   return {
     items,

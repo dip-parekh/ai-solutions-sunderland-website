@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Testimonial } from '@/types/database';
 import { Star } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const Testimonials = () => {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
@@ -13,6 +14,21 @@ const Testimonials = () => {
 
   useEffect(() => {
     fetchTestimonials();
+    
+    // Set up real-time listener for testimonials changes
+    const channel = supabase.channel('public-testimonials')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'testimonials'
+      }, () => {
+        fetchTestimonials();
+      })
+      .subscribe();
+      
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchTestimonials = async () => {
@@ -30,6 +46,7 @@ const Testimonials = () => {
       
       setTestimonials(data || []);
     } catch (error: any) {
+      console.error('Error fetching testimonials:', error);
       toast({
         variant: "destructive",
         title: "Error fetching testimonials",
@@ -58,8 +75,24 @@ const Testimonials = () => {
         </p>
         
         {isLoading ? (
-          <div className="flex justify-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[...Array(6)].map((_, index) => (
+              <div key={index} className="bg-white p-6 rounded-lg shadow-md">
+                <div className="mb-4 flex">
+                  {[...Array(5)].map((_, starIndex) => (
+                    <Skeleton key={starIndex} className="h-5 w-5 mr-1" />
+                  ))}
+                </div>
+                <Skeleton className="h-24 w-full mb-6" />
+                <div className="flex items-center">
+                  <Skeleton className="w-12 h-12 rounded-full mr-4" />
+                  <div>
+                    <Skeleton className="h-5 w-32 mb-2" />
+                    <Skeleton className="h-4 w-24" />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         ) : testimonials.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -82,6 +115,9 @@ const Testimonials = () => {
                           src={testimonial.image_url} 
                           alt={testimonial.name} 
                           className="w-full h-full object-cover" 
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = 'https://via.placeholder.com/48';
+                          }}
                         />
                       </div>
                     ) : (

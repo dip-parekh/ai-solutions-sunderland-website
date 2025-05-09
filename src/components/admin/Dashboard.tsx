@@ -9,13 +9,14 @@ import { AnalyticsSection } from './dashboard/AnalyticsSection';
 import { EventSuggestions } from './dashboard/EventSuggestions';
 import { InquiryDetailsModal } from './dashboard/InquiryDetailsModal';
 import { Inquiry } from '@/types/database';
-import { mockInquiries } from './dashboard/mockData';
+import { supabase } from '@/integrations/supabase/client';
 
 const Dashboard = () => {
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -28,43 +29,54 @@ const Dashboard = () => {
       return;
     }
     
-    // Try to load inquiries from localStorage
-    const storedInquiries = localStorage.getItem('inquiries');
+    // Fetch inquiries from Supabase
+    fetchInquiries();
     
-    if (storedInquiries) {
-      try {
-        const parsedInquiries = JSON.parse(storedInquiries);
-        
-        // Format the inquiries and add AI-generated fields for demo purposes
-        const formattedInquiries = parsedInquiries.map((inquiry: any) => {
-          const aiCategories = ['Sales', 'Support', 'Partnerships'];
-          const aiSentiments = ['positive', 'negative', 'neutral'];
-          const aiSuggestions = [
-            'Schedule a follow-up call to discuss requirements.',
-            'Send product documentation and pricing information.',
-            'Assign to specialized team for technical assessment.',
-            'Add to CRM for sales pipeline tracking.'
-          ];
-          
-          return {
-            ...inquiry,
-            company: inquiry.companyName || inquiry.company,
-            aiCategory: aiCategories[Math.floor(Math.random() * aiCategories.length)],
-            aiSentiment: aiSentiments[Math.floor(Math.random() * aiSentiments.length)] as 'positive' | 'negative' | 'neutral',
-            aiSuggestion: aiSuggestions[Math.floor(Math.random() * aiSuggestions.length)]
-          };
-        });
-        
-        setInquiries([...formattedInquiries, ...mockInquiries]);
-      } catch (error) {
-        console.error('Error parsing stored inquiries:', error);
-        setInquiries(mockInquiries);
-      }
-    } else {
-      // If no stored inquiries, just use mock data
-      setInquiries(mockInquiries);
-    }
+    // Setup real-time listener for inquiries
+    const channel = supabase.channel('dashboard-inquiries')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'inquiries'
+      }, () => {
+        fetchInquiries();
+      })
+      .subscribe();
+      
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [navigate]);
+
+  const fetchInquiries = async () => {
+    setIsLoading(true);
+    
+    try {
+      const { data, error } = await supabase
+        .from('inquiries')
+        .select('*')
+        .order('created_at', { ascending: false });
+        
+      if (error) {
+        throw error;
+      }
+      
+      setInquiries(data as Inquiry[]);
+    } catch (error: any) {
+      console.error('Error fetching inquiries:', error);
+      toast({
+        variant: "destructive",
+        title: "Error loading inquiries",
+        description: error.message || "Failed to load inquiries"
+      });
+      
+      // Fallback to mock data if database connection fails
+      const { mockInquiries } = await import('./dashboard/mockData');
+      setInquiries(mockInquiries);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleLogout = () => {
     sessionStorage.removeItem('adminAuthenticated');
@@ -87,8 +99,8 @@ const Dashboard = () => {
         inquiry.name,
         inquiry.email,
         inquiry.company || '',
-        inquiry.date,
-        inquiry.status,
+        inquiry.date || new Date().toISOString(),
+        inquiry.status || 'new',
         inquiry.message || '',
         inquiry.ai_category || '',
         inquiry.ai_sentiment || '',
@@ -117,24 +129,40 @@ const Dashboard = () => {
   };
 
   const handleStatusChange = async (id: string, status: string) => {
-    // Update the inquiry status in the local state
-    setInquiries(prevInquiries => 
-      prevInquiries.map(inquiry => 
-        inquiry.id === id ? { ...inquiry, status } : inquiry
-      )
-    );
-    
-    // Show success toast
-    toast({
-      title: "Status Updated",
-      description: `Inquiry status has been changed to ${status}.`,
-    });
-    
-    // In a real application, you would update the status in the database here
-    console.log(`Status changed for inquiry ${id} to ${status}`);
-    
-    // Simulate an async operation
-    return Promise.resolve();
+    try {
+      // Update in Supabase
+      const { error } = await supabase
+        .from('inquiries')
+        .update({ status })
+        .eq('id', id);
+        
+      if (error) {
+        throw error;
+      }
+      
+      // Update local state
+      setInquiries(prevInquiries => 
+        prevInquiries.map(inquiry => 
+          inquiry.id === id ? { ...inquiry, status } : inquiry
+        )
+      );
+      
+      // Show success toast
+      toast({
+        title: "Status Updated",
+        description: `Inquiry status has been changed to ${status}.`,
+      });
+      
+      return Promise.resolve();
+    } catch (error: any) {
+      console.error('Error updating status:', error);
+      toast({
+        variant: "destructive",
+        title: "Error updating status",
+        description: error.message || "Failed to update status"
+      });
+      return Promise.reject(error);
+    }
   };
 
   const filteredInquiries = selectedCategory
@@ -151,7 +179,7 @@ const Dashboard = () => {
       <AdminHeader handleLogout={handleLogout} />
 
       <div className="container mx-auto p-4">
-        <AdminStatistics inquiries={inquiries} />
+        <AdminStatistics inquiries={inquiries} isLoading={isLoading} />
         
         <InquiriesTable 
           selectedCategory={selectedCategory}
@@ -159,6 +187,7 @@ const Dashboard = () => {
           filteredInquiries={filteredInquiries}
           handleViewInquiry={handleViewInquiry}
           handleExportCSV={handleExportCSV}
+          isLoading={isLoading}
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
