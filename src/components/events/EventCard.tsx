@@ -1,3 +1,4 @@
+
 import { Event } from '@/types/database';
 import { Calendar, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
