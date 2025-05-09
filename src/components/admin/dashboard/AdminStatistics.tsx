@@ -1,54 +1,72 @@
 
-import { MessageSquare, FileText, Calendar, Star } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { StatsCards } from "./StatsCards";
+import { ActivityChart } from "./ActivityChart";
+import { RecentActivity } from "./RecentActivity";
 import { Inquiry } from "@/types/database";
 
-interface AdminStatisticsProps {
+export interface AdminStatisticsProps {
   inquiries: Inquiry[];
+  isLoading?: boolean;
 }
 
-export const AdminStatistics = ({ inquiries }: AdminStatisticsProps) => {
-  const stats = [
-    { 
-      label: 'Total Inquiries', 
-      value: inquiries.length.toString(), 
-      icon: MessageSquare, 
-      color: 'bg-blue-100 text-blue-600' 
+export const AdminStatistics = ({ inquiries, isLoading = false }: AdminStatisticsProps) => {
+  // Count inquiries by status
+  const newCount = inquiries.filter(inq => inq.status === 'new').length;
+  const inProgressCount = inquiries.filter(inq => inq.status === 'in progress').length;
+  const completedCount = inquiries.filter(inq => inq.status === 'completed').length;
+  
+  const statsData = [
+    {
+      title: "New Inquiries",
+      value: newCount,
+      change: "+5%",
+      icon: "MessageSquare"
     },
-    { 
-      label: 'Active Projects', 
-      value: '8', 
-      icon: FileText, 
-      color: 'bg-green-100 text-green-600' 
+    {
+      title: "In Progress",
+      value: inProgressCount,
+      change: "+2%",
+      icon: "Clock"
     },
-    { 
-      label: 'Upcoming Events', 
-      value: '3', 
-      icon: Calendar, 
-      color: 'bg-purple-100 text-purple-600' 
+    {
+      title: "Completed",
+      value: completedCount,
+      change: "+12%",
+      icon: "CheckCircle"
     },
-    { 
-      label: 'Average Rating', 
-      value: '4.9', 
-      icon: Star, 
-      color: 'bg-amber-100 text-amber-600' 
+    {
+      title: "Total Inquiries",
+      value: inquiries.length,
+      change: "+8%",
+      icon: "Users"
     },
   ];
 
+  // Get only recent inquiries for the activity chart
+  const recentInquiries = inquiries.slice(0, 5);
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-      {stats.map((stat, index) => (
-        <div key={index} className="bg-white p-6 rounded-lg shadow-sm">
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-sm text-gray-500">{stat.label}</p>
-              <p className="text-3xl font-bold">{stat.value}</p>
-            </div>
-            <div className={`${stat.color} p-3 rounded-full`}>
-              <stat.icon size={24} />
-            </div>
-          </div>
-        </div>
-      ))}
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+      <StatsCards stats={statsData} isLoading={isLoading} />
+      
+      <Card className="col-span-full lg:col-span-3">
+        <CardHeader>
+          <CardTitle>Inquiries Overview</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ActivityChart data={inquiries} isLoading={isLoading} />
+        </CardContent>
+      </Card>
+      
+      <Card className="col-span-full lg:col-span-1">
+        <CardHeader>
+          <CardTitle>Recent Activity</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <RecentActivity inquiries={recentInquiries} isLoading={isLoading} />
+        </CardContent>
+      </Card>
     </div>
   );
 };
