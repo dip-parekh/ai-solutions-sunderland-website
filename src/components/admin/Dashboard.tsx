@@ -116,6 +116,27 @@ const Dashboard = () => {
     });
   };
 
+  const handleStatusChange = async (id: string, status: string) => {
+    // Update the inquiry status in the local state
+    setInquiries(prevInquiries => 
+      prevInquiries.map(inquiry => 
+        inquiry.id === id ? { ...inquiry, status } : inquiry
+      )
+    );
+    
+    // Show success toast
+    toast({
+      title: "Status Updated",
+      description: `Inquiry status has been changed to ${status}.`,
+    });
+    
+    // In a real application, you would update the status in the database here
+    console.log(`Status changed for inquiry ${id} to ${status}`);
+    
+    // Simulate an async operation
+    return Promise.resolve();
+  };
+
   const filteredInquiries = selectedCategory
     ? inquiries.filter(inquiry => inquiry.ai_category === selectedCategory)
     : inquiries;
@@ -150,6 +171,7 @@ const Dashboard = () => {
         <InquiryDetailsModal 
           inquiry={selectedInquiry}
           onClose={() => setIsDetailsModalOpen(false)}
+          onStatusChange={handleStatusChange}
         />
       )}
     </div>
