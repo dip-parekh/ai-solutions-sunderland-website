@@ -1,13 +1,62 @@
 
+import React, { useEffect, useState } from 'react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { BarChart2 } from "lucide-react";
 import { Inquiry } from "@/types/database";
 
 interface ActivityChartProps {
   data?: Inquiry[];
   isLoading: boolean;
+  dateRange?: { from: Date; to: Date };
 }
 
-export const ActivityChart = ({ data = [], isLoading }: ActivityChartProps) => {
+export const ActivityChart = ({ data = [], isLoading, dateRange }: ActivityChartProps) => {
+  const [chartData, setChartData] = useState<any[]>([]);
+  
+  useEffect(() => {
+    if (data.length > 0) {
+      const processedData = processDailyData(data, dateRange);
+      setChartData(processedData);
+    } else {
+      // Default data when no inquiries
+      setChartData([
+        { date: 'Mon', count: 0 },
+        { date: 'Tue', count: 0 },
+        { date: 'Wed', count: 0 },
+        { date: 'Thu', count: 0 },
+        { date: 'Fri', count: 0 },
+        { date: 'Sat', count: 0 },
+        { date: 'Sun', count: 0 },
+      ]);
+    }
+  }, [data, dateRange]);
+
+  const processDailyData = (inquiries: Inquiry[], range?: { from: Date; to: Date }) => {
+    // Get date range for filtering
+    const fromDate = range?.from || new Date(new Date().setDate(new Date().getDate() - 7));
+    const toDate = range?.to || new Date();
+
+    // Filter inquiries by date range
+    const filteredInquiries = inquiries.filter(inquiry => {
+      const inquiryDate = new Date(inquiry.date || inquiry.created_at || '');
+      return inquiryDate >= fromDate && inquiryDate <= toDate;
+    });
+
+    // Group by day of week
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const dailyCounts = days.map(day => ({ date: day, count: 0 }));
+
+    filteredInquiries.forEach(inquiry => {
+      const inquiryDate = new Date(inquiry.date || inquiry.created_at || '');
+      const dayOfWeek = inquiryDate.getDay();
+      dailyCounts[dayOfWeek].count += 1;
+    });
+
+    // Reorder to start with Monday
+    const reordered = [...dailyCounts.slice(1), dailyCounts[0]];
+    return reordered;
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
       <div className="flex justify-between items-center mb-6">
@@ -17,30 +66,22 @@ export const ActivityChart = ({ data = [], isLoading }: ActivityChartProps) => {
         </h2>
       </div>
       
-      <div className="h-64 flex items-center justify-center">
-        <div className="text-center text-gray-500">
-          {isLoading ? (
-            <div className="w-full h-full flex items-center justify-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            </div>
-          ) : (
-            <div className="space-y-6">
-              {/* Simple bar chart */}
-              <div className="flex items-end justify-around h-40 space-x-2">
-                {[0.6, 0.9, 0.4, 0.7, 0.5, 0.3, 0.8].map((height, i) => (
-                  <div key={i} className="flex flex-col items-center">
-                    <div 
-                      className="bg-blue-500 rounded-t w-8" 
-                      style={{ height: `${height * 100}%` }}
-                    ></div>
-                    <div className="text-xs mt-1">{`D${i+1}`}</div>
-                  </div>
-                ))}
-              </div>
-              <p>Daily Inquiry Trend</p>
-            </div>
-          )}
-        </div>
+      <div className="h-64">
+        {isLoading ? (
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} />
+              <XAxis dataKey="date" />
+              <YAxis allowDecimals={false} />
+              <Tooltip formatter={(value) => [`${value} inquiries`, 'Count']} />
+              <Bar dataKey="count" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        )}
       </div>
     </div>
   );

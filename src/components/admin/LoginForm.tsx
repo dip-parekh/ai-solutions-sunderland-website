@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,15 +18,54 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  useEffect(() => {
+    // Create default admin user if it doesn't exist
+    const createDefaultAdmin = async () => {
+      try {
+        // Check if admin user exists
+        const { data: adminUser, error: fetchError } = await supabase
+          .from('admin_users')
+          .select('*')
+          .eq('email', 'admin@example.com')
+          .single();
+
+        if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 means "no rows returned"
+          console.error('Error checking for admin user:', fetchError);
+          return;
+        }
+
+        if (!adminUser) {
+          console.log('Creating default admin user...');
+          // Create admin user in auth
+          const { error: signupError } = await supabase.auth.signUp({
+            email: 'admin@example.com',
+            password: 'admin',
+          });
+
+          if (signupError) {
+            console.error('Error creating admin user:', signupError);
+          }
+        }
+      } catch (error) {
+        console.error('Error in createDefaultAdmin:', error);
+      }
+    };
+
+    createDefaultAdmin();
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
 
+    // Handle default admin login
+    const loginEmail = email === 'admin' ? 'admin@example.com' : email;
+
     try {
       // Attempt to sign in with Supabase Auth
       const { data, error } = await supabase.auth.signInWithPassword({
-        email,
+        email: loginEmail,
         password
       });
 
@@ -74,11 +113,11 @@ const LoginForm = () => {
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">Email / Username</Label>
             <Input
               id="email"
-              type="email"
-              placeholder="admin@example.com"
+              type="text"
+              placeholder="admin"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required

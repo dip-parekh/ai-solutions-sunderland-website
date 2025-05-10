@@ -1,9 +1,9 @@
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, Routes, Route, Navigate } from 'react-router-dom';
 import LoginForm from '../components/admin/LoginForm';
 import AdminLayout from '../components/admin/AdminLayout';
-import { supabase } from '@/integrations/supabase/client';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
 import Dashboard from './admin/Dashboard';
 import Inquiries from './admin/Inquiries';
 import Projects from './admin/Projects';
@@ -11,55 +11,16 @@ import Testimonials from './admin/Testimonials';
 import Articles from './admin/Articles';
 import Events from './admin/Events';
 import Gallery from './admin/Gallery';
-import { useToast } from '@/hooks/use-toast';
 
 const Admin = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const { isAuthenticated, isLoading } = useAdminAuth();
   const navigate = useNavigate();
-  const { toast } = useToast();
 
   useEffect(() => {
-    const checkAuth = async () => {
-      // Check for existing session
-      const { data: { session } } = await supabase.auth.getSession();
-      const sessionAuth = sessionStorage.getItem('adminAuthenticated') === 'true';
-      
-      const isAuth = !!session || sessionAuth;
-      setIsAuthenticated(isAuth);
-      
-      if (isAuth && window.location.pathname === '/admin') {
-        navigate('/admin/dashboard');
-      }
-      
-      setIsLoading(false);
-    };
-    
-    checkAuth();
-    
-    // Set up auth listener for changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        const isAuth = !!session;
-        setIsAuthenticated(isAuth);
-        
-        if (isAuth && window.location.pathname === '/admin') {
-          navigate('/admin/dashboard');
-        } else if (!isAuth && window.location.pathname !== '/admin') {
-          toast({
-            variant: "destructive",
-            title: "Session expired",
-            description: "Please login again to continue.",
-          });
-          navigate('/admin');
-        }
-      }
-    );
-    
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [navigate, toast]);
+    if (isAuthenticated && window.location.pathname === '/admin') {
+      navigate('/admin/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
 
   if (isLoading) {
     return (
@@ -84,21 +45,30 @@ const Admin = () => {
     );
   }
 
-  // If not authenticated and trying to access any admin route, redirect to login
-  if (!isAuthenticated && window.location.pathname.startsWith('/admin/')) {
-    return <Navigate to="/admin" replace />;
-  }
-
   // Protected admin routes
   return (
     <Routes>
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/inquiries" element={<Inquiries />} />
-      <Route path="/projects" element={<Projects />} />
-      <Route path="/testimonials" element={<Testimonials />} />
-      <Route path="/articles" element={<Articles />} />
-      <Route path="/events" element={<Events />} />
-      <Route path="/gallery" element={<Gallery />} />
+      <Route path="/dashboard" element={
+        isAuthenticated ? <Dashboard /> : <Navigate to="/admin" replace />
+      } />
+      <Route path="/inquiries" element={
+        isAuthenticated ? <Inquiries /> : <Navigate to="/admin" replace />
+      } />
+      <Route path="/projects" element={
+        isAuthenticated ? <Projects /> : <Navigate to="/admin" replace />
+      } />
+      <Route path="/testimonials" element={
+        isAuthenticated ? <Testimonials /> : <Navigate to="/admin" replace />
+      } />
+      <Route path="/articles" element={
+        isAuthenticated ? <Articles /> : <Navigate to="/admin" replace />
+      } />
+      <Route path="/events" element={
+        isAuthenticated ? <Events /> : <Navigate to="/admin" replace />
+      } />
+      <Route path="/gallery" element={
+        isAuthenticated ? <Gallery /> : <Navigate to="/admin" replace />
+      } />
       <Route path="/*" element={<Navigate to="/admin/dashboard" replace />} />
     </Routes>
   );
