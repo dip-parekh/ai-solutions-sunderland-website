@@ -20,7 +20,7 @@ export const useAdminAuth = () => {
         const isAuth = !!session || sessionAuth;
         setIsAuthenticated(isAuth);
         
-        if (!isAuth && window.location.pathname !== '/admin') {
+        if (!isAuth && window.location.pathname !== '/admin' && window.location.pathname.startsWith('/admin')) {
           toast({
             variant: "destructive",
             title: "Authentication required",
@@ -44,13 +44,20 @@ export const useAdminAuth = () => {
         const isAuth = !!session;
         setIsAuthenticated(isAuth);
         
-        if (!isAuth && window.location.pathname !== '/admin') {
-          toast({
-            variant: "destructive",
-            title: "Session expired",
-            description: "Please login again to continue.",
-          });
-          navigate('/admin');
+        if (event === 'SIGNED_IN') {
+          sessionStorage.setItem('adminAuthenticated', 'true');
+        }
+        
+        if (event === 'SIGNED_OUT') {
+          sessionStorage.removeItem('adminAuthenticated');
+          if (window.location.pathname !== '/admin' && window.location.pathname.startsWith('/admin')) {
+            toast({
+              variant: "destructive",
+              title: "Session expired",
+              description: "Please login again to continue.",
+            });
+            navigate('/admin');
+          }
         }
       }
     );

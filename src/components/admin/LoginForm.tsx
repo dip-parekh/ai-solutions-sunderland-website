@@ -18,14 +18,18 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  // Default admin credentials for easier reference
+  const defaultAdminEmail = 'admin@example.com';
+  const defaultAdminPassword = 'admin123'; // Changed to meet 6-character minimum
+
   useEffect(() => {
     // Create default admin user if it doesn't exist
     const createDefaultAdmin = async () => {
       try {
         // Check if the default admin exists in auth system
         const { data, error } = await supabase.auth.signUp({
-          email: 'admin@example.com',
-          password: 'admin',
+          email: defaultAdminEmail,
+          password: defaultAdminPassword,
         });
 
         if (!error || error.message.includes('already registered')) {
@@ -33,6 +37,42 @@ const LoginForm = () => {
           console.log('Default admin user available');
         } else {
           console.error('Error creating admin user:', error);
+          toast({
+            variant: "destructive",
+            title: "Setup Error",
+            description: "Could not create default admin user. Please try again later.",
+          });
+        }
+        
+        // Ensure admin exists in admin_users table as well (in case trigger didn't work)
+        if (!error || error.message.includes('already registered')) {
+          // Try to get user ID
+          const { data: authData } = await supabase.auth.getSession();
+          const userId = authData?.session?.user?.id;
+          
+          if (userId) {
+            // Check if user exists in admin_users table
+            const { data: adminUserData, error: fetchError } = await supabase
+              .from('admin_users')
+              .select('*')
+              .eq('email', defaultAdminEmail)
+              .maybeSingle();
+              
+            if (!adminUserData && (!fetchError || fetchError.code === 'PGRST116')) {
+              // Add user to admin_users table manually if not exists
+              const { error: insertError } = await supabase
+                .from('admin_users')
+                .insert({
+                  id: userId,
+                  email: defaultAdminEmail,
+                  is_super_admin: true
+                });
+                
+              if (insertError) {
+                console.error('Error adding user to admin_users table:', insertError);
+              }
+            }
+          }
         }
       } catch (error) {
         console.error('Error in createDefaultAdmin:', error);
@@ -40,7 +80,7 @@ const LoginForm = () => {
     };
 
     createDefaultAdmin();
-  }, []);
+  }, [toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,13 +88,14 @@ const LoginForm = () => {
     setError(null);
 
     // Handle default admin login
-    const loginEmail = email === 'admin' ? 'admin@example.com' : email;
+    const loginEmail = email === 'admin' ? defaultAdminEmail : email;
+    const loginPassword = password === 'admin' ? defaultAdminPassword : password;
 
     try {
       // Attempt to sign in with Supabase Auth
       const { data, error } = await supabase.auth.signInWithPassword({
         email: loginEmail,
-        password
+        password: loginPassword
       });
 
       if (error) {
@@ -90,6 +131,11 @@ const LoginForm = () => {
         <CardTitle className="text-2xl text-center">Admin Login</CardTitle>
         <CardDescription className="text-center">
           Enter your credentials to access the admin dashboard
+          <div className="mt-2 p-2 bg-blue-50 border border-blue-100 rounded">
+            <p className="text-sm text-blue-700 font-medium">Default login:</p>
+            <p className="text-sm">Username: admin</p>
+            <p className="text-sm">Password: admin123</p>
+          </div>
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
