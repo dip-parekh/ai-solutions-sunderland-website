@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { AdminHeader } from './dashboard/AdminHeader';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { Loader2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -12,6 +13,14 @@ interface AdminLayoutProps {
 
 const AdminLayout = ({ children, title = "Admin", requireAuth = true }: AdminLayoutProps) => {
   const { isAuthenticated, isLoading, logout } = useAdminAuth();
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    // Redirect to login page if authentication is required but user is not authenticated
+    if (requireAuth && isAuthenticated === false) {
+      navigate('/admin');
+    }
+  }, [isAuthenticated, requireAuth, navigate]);
 
   if (isLoading) {
     return (
@@ -22,7 +31,11 @@ const AdminLayout = ({ children, title = "Admin", requireAuth = true }: AdminLay
   }
 
   if (requireAuth && !isAuthenticated) {
-    return null; // Don't render content, will redirect in useEffect
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div>Redirecting to login...</div>
+      </div>
+    );
   }
 
   return (

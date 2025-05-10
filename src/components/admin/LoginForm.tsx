@@ -22,29 +22,17 @@ const LoginForm = () => {
     // Create default admin user if it doesn't exist
     const createDefaultAdmin = async () => {
       try {
-        // Check if admin user exists
-        const { data: adminUser, error: fetchError } = await supabase
-          .from('admin_users')
-          .select('*')
-          .eq('email', 'admin@example.com')
-          .single();
+        // Check if the default admin exists in auth system
+        const { data, error } = await supabase.auth.signUp({
+          email: 'admin@example.com',
+          password: 'admin',
+        });
 
-        if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 means "no rows returned"
-          console.error('Error checking for admin user:', fetchError);
-          return;
-        }
-
-        if (!adminUser) {
-          console.log('Creating default admin user...');
-          // Create admin user in auth
-          const { error: signupError } = await supabase.auth.signUp({
-            email: 'admin@example.com',
-            password: 'admin',
-          });
-
-          if (signupError) {
-            console.error('Error creating admin user:', signupError);
-          }
+        if (!error || error.message.includes('already registered')) {
+          // Either successfully created or already exists
+          console.log('Default admin user available');
+        } else {
+          console.error('Error creating admin user:', error);
         }
       } catch (error) {
         console.error('Error in createDefaultAdmin:', error);
