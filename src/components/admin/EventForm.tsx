@@ -40,16 +40,19 @@ const EventForm: React.FC<EventFormProps> = ({ event, onSubmit, onCancel }) => {
   });
 
   const handleSubmit = (data: Partial<Event>) => {
+    // Create a copy of the data to modify
+    const submissionData = { ...data };
+    
     // Ensure dates are in ISO string format
-    if (data.start_date && typeof data.start_date === 'object') {
-      data.start_date = data.start_date.toISOString();
+    if (submissionData.start_date && submissionData.start_date instanceof Date) {
+      submissionData.start_date = submissionData.start_date.toISOString();
     }
     
-    if (data.end_date && typeof data.end_date === 'object') {
-      data.end_date = data.end_date.toISOString();
+    if (submissionData.end_date && submissionData.end_date instanceof Date) {
+      submissionData.end_date = submissionData.end_date.toISOString();
     }
     
-    onSubmit(data);
+    onSubmit(submissionData);
   };
 
   return (
@@ -131,6 +134,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, onSubmit, onCancel }) => {
                       mode="single"
                       selected={typeof field.value === 'string' ? new Date(field.value) : field.value as Date}
                       onSelect={field.onChange}
+                      className="pointer-events-auto"
                     />
                   </PopoverContent>
                 </Popover>
@@ -168,6 +172,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, onSubmit, onCancel }) => {
                       mode="single"
                       selected={typeof field.value === 'string' ? new Date(field.value) : field.value as Date}
                       onSelect={field.onChange}
+                      className="pointer-events-auto"
                     />
                   </PopoverContent>
                 </Popover>
