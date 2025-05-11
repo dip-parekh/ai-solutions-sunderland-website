@@ -44,12 +44,18 @@ const EventForm: React.FC<EventFormProps> = ({ event, onSubmit, onCancel }) => {
     const submissionData = { ...data };
     
     // Ensure dates are in ISO string format
-    if (submissionData.start_date && submissionData.start_date instanceof Date) {
-      submissionData.start_date = submissionData.start_date.toISOString();
+    if (submissionData.start_date) {
+      // Check if it's a Date object by looking for date methods
+      if (typeof submissionData.start_date === 'object' && 'toISOString' in submissionData.start_date) {
+        submissionData.start_date = (submissionData.start_date as Date).toISOString();
+      }
     }
     
-    if (submissionData.end_date && submissionData.end_date instanceof Date) {
-      submissionData.end_date = submissionData.end_date.toISOString();
+    if (submissionData.end_date) {
+      // Check if it's a Date object by looking for date methods
+      if (typeof submissionData.end_date === 'object' && 'toISOString' in submissionData.end_date) {
+        submissionData.end_date = (submissionData.end_date as Date).toISOString();
+      }
     }
     
     onSubmit(submissionData);
@@ -122,7 +128,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, onSubmit, onCancel }) => {
                         {field.value ? (
                           typeof field.value === 'string' ? 
                             format(new Date(field.value), 'PPP') :
-                            format(field.value, 'PPP')
+                            format(field.value as Date, 'PPP')
                         ) : (
                           <span>Pick a date</span>
                         )}
@@ -134,7 +140,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, onSubmit, onCancel }) => {
                       mode="single"
                       selected={typeof field.value === 'string' ? new Date(field.value) : field.value as Date}
                       onSelect={field.onChange}
-                      className="pointer-events-auto"
+                      className="p-3 pointer-events-auto"
                     />
                   </PopoverContent>
                 </Popover>
@@ -160,7 +166,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, onSubmit, onCancel }) => {
                         {field.value ? (
                           typeof field.value === 'string' ? 
                             format(new Date(field.value), 'PPP') :
-                            format(field.value, 'PPP')
+                            format(field.value as Date, 'PPP')
                         ) : (
                           <span>Pick a date</span>
                         )}
@@ -172,7 +178,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, onSubmit, onCancel }) => {
                       mode="single"
                       selected={typeof field.value === 'string' ? new Date(field.value) : field.value as Date}
                       onSelect={field.onChange}
-                      className="pointer-events-auto"
+                      className="p-3 pointer-events-auto"
                     />
                   </PopoverContent>
                 </Popover>
