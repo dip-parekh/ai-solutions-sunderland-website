@@ -47,14 +47,16 @@ const EventForm: React.FC<EventFormProps> = ({ event, onSubmit, onCancel }) => {
     if (submissionData.start_date) {
       // Check if it's a Date object by looking for date methods
       if (typeof submissionData.start_date === 'object' && 'toISOString' in submissionData.start_date) {
-        submissionData.start_date = (submissionData.start_date as Date).toISOString();
+        const startDate = submissionData.start_date as Date;
+        submissionData.start_date = startDate.toISOString();
       }
     }
     
     if (submissionData.end_date) {
       // Check if it's a Date object by looking for date methods
       if (typeof submissionData.end_date === 'object' && 'toISOString' in submissionData.end_date) {
-        submissionData.end_date = (submissionData.end_date as Date).toISOString();
+        const endDate = submissionData.end_date as Date;
+        submissionData.end_date = endDate.toISOString();
       }
     }
     
