@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
@@ -48,7 +47,8 @@ const EventForm: React.FC<EventFormProps> = ({ event, onSubmit, onCancel }) => {
       // Check if it's a Date object by looking for date methods
       if (typeof submissionData.start_date === 'object' && 'toISOString' in submissionData.start_date) {
         const startDate = submissionData.start_date as Date;
-        submissionData.start_date = startDate.toISOString();
+        // Ensure we're not working with null before calling toISOString()
+        submissionData.start_date = startDate ? startDate.toISOString() : new Date().toISOString();
       }
     }
     
@@ -56,7 +56,8 @@ const EventForm: React.FC<EventFormProps> = ({ event, onSubmit, onCancel }) => {
       // Check if it's a Date object by looking for date methods
       if (typeof submissionData.end_date === 'object' && 'toISOString' in submissionData.end_date) {
         const endDate = submissionData.end_date as Date;
-        submissionData.end_date = endDate.toISOString();
+        // Ensure we're not working with null before calling toISOString()
+        submissionData.end_date = endDate ? endDate.toISOString() : new Date().toISOString();
       }
     }
     

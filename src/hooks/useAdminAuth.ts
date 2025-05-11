@@ -14,6 +14,7 @@ export function useAdminAuth() {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, newSession) => {
+        console.log('Auth state changed:', event, newSession?.user?.email);
         setSession(newSession);
         
         // Check if user is in admin_users table
@@ -27,6 +28,7 @@ export function useAdminAuth() {
 
     // Check for existing session
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      console.log('Current session:', currentSession?.user?.email);
       setSession(currentSession);
       
       // Check admin status if we have a session
@@ -46,6 +48,7 @@ export function useAdminAuth() {
 
   const checkAdminStatus = async (userId: string) => {
     try {
+      console.log('Checking admin status for user:', userId);
       const { data, error } = await supabase
         .from('admin_users')
         .select('id')
@@ -53,6 +56,7 @@ export function useAdminAuth() {
         .single();
         
       setIsAdmin(!!data);
+      console.log('Admin status check result:', !!data);
       
       if (error) {
         console.error("Error checking admin status:", error);
@@ -66,17 +70,20 @@ export function useAdminAuth() {
 
   const signIn = async (email: string, password: string) => {
     try {
+      console.log('Attempting signin with:', email);
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
       });
       
       if (error) {
+        console.error("Sign in error:", error);
         throw error;
       }
       
       // Check if the user is in admin_users table
       if (data.user) {
+        console.log('User signed in, checking admin status');
         const { data: adminData, error: adminError } = await supabase
           .from('admin_users')
           .select('*')
@@ -85,10 +92,12 @@ export function useAdminAuth() {
           
         if (adminError || !adminData) {
           // User exists but is not an admin
+          console.error("User is not an admin:", adminError);
           await supabase.auth.signOut();
           throw new Error('User is not authorized for admin access');
         }
         
+        console.log('Admin verification successful');
         return data;
       }
     } catch (error: any) {
